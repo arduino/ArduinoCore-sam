@@ -1,53 +1,66 @@
 /*
-  Web Server
+  Web  Server
  
  A simple web server that shows the value of the analog input pins.
- using an Arduino Wiznet Ethernet shield. 
+ using a WiFi shield.
+ 
+ This example is written for a network using WPA encryption. For 
+ WEP or WPA, change the Wifi.begin() call accordingly.
  
  Circuit:
- * Ethernet shield attached to pins 10, 11, 12, 13
+ * WiFi shield attached
  * Analog inputs attached to pins A0 through A5 (optional)
  
- created 18 Dec 2009
- by David A. Mellis
- modified 9 Apr 2012
+ created 13 July 2010
+ by dlf (Metodo2 srl)
+ modified 31 May 2012
  by Tom Igoe
- 
  */
+ 
+#inlcude <SPI.h>
+#include <WiFi.h>
 
-#include <SPI.h>
-#include <Ethernet.h>
+char ssid[] = "yourNetwork";      //  your network SSID (name) 
+char pass[] = "secretPassword";   // your network password
+int keyIndex = 0;                 // your network key Index number (needed only for WEP)
 
-// Enter a MAC address and IP address for your controller below.
-// The IP address will be dependent on your local network:
-byte mac[] = { 
-  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress ip(192,168,1,177);
+int status = WL_IDLE_STATUS;
 
-// Initialize the Ethernet server library
-// with the IP address and port you want to use 
-// (port 80 is default for HTTP):
-EthernetServer server(80);
+WiFiServer server(80);
 
 void setup() {
-  // Open serial communications and wait for port to open:
-  Serial.begin(9600);
-   while (!Serial) {
+  //Initialize serial and wait for port to open:
+  Serial.begin(9600); 
+  while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
+  
+  // check for the presence of the shield:
+  if (WiFi.status() == WL_NO_SHIELD) {
+    Serial.println("WiFi shield not present"); 
+    // don't continue:
+    while(true);
+  } 
+  
+  // attempt to connect to Wifi network:
+  while ( status != WL_CONNECTED) { 
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:    
+    status = WiFi.begin(ssid, pass);
 
-
-  // start the Ethernet connection and the server:
-  Ethernet.begin(mac, ip);
+    // wait 10 seconds for connection:
+    delay(10000);
+  } 
   server.begin();
-  Serial.print("server is at ");
-  Serial.println(Ethernet.localIP());
+  // you're connected now, so print out the status:
+  printWifiStatus();
 }
 
 
 void loop() {
   // listen for incoming clients
-  EthernetClient client = server.available();
+  WiFiClient client = server.available();
   if (client) {
     Serial.println("new client");
     // an http request ends with a blank line
@@ -79,7 +92,7 @@ void loop() {
             client.println("<br />");       
           }
           client.println("</html>");
-          break;
+           break;
         }
         if (c == '\n') {
           // you're starting a new line
@@ -93,9 +106,27 @@ void loop() {
     }
     // give the web browser time to receive the data
     delay(1);
-    // close the connection:
-    client.stop();
-    Serial.println("client disonnected");
+      // close the connection:
+      client.stop();
+      Serial.println("client disonnected");
   }
+}
+
+
+void printWifiStatus() {
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+
+  // print your WiFi shield's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.print(rssi);
+  Serial.println(" dBm");
 }
 
