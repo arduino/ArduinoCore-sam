@@ -380,9 +380,6 @@ void init( void )
     while (true);
   }
 
-  // Initialize C library
-  __libc_init_array();
-
   // Disable pull-up on every pin
   for (unsigned i = 0; i < PINS_COUNT; i++)
 	  digitalWrite(i, LOW);
@@ -445,6 +442,9 @@ void init( void )
 
   // Initialize analogOutput module
   analogOutputInit();
+
+  // Initialize C library and run C++ constructors
+  __libc_init_array();
 }
 
 #ifdef __cplusplus
