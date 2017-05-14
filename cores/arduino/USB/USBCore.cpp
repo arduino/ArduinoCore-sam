@@ -1,4 +1,5 @@
 // Copyright (c) 2010, Peter Barrett
+// Copyright (c) 2017, Boris Barbour
 /*
 ** Permission to use, copy, modify, and/or distribute this software for
 ** any purpose with or without fee is hereby granted, provided that the
@@ -137,21 +138,22 @@ uint32_t USBD_Available(uint32_t ep)
 
 //	Non Blocking receive
 //	Return number of bytes read
+
+//      Caller must release empty FIFO; release was moved out to
+//      prevent a race condition when interrupts are enabled. The
+//      "accept" function will release as necessary if used
+//      (recommended).
 uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
 {
 	if (!_usbConfiguration)
 		return -1;
 
-	LockEP lock(ep);
 	uint32_t n = UDD_FifoByteCount(ep & 0xF);
 	len = min(n,len);
 	n = len;
 	uint8_t* dst = (uint8_t*)d;
 	while (n--)
 		*dst++ = UDD_Recv8(ep & 0xF);
-	if (len && !UDD_FifoByteCount(ep & 0xF)) // release empty buffer
-		UDD_ReleaseRX(ep & 0xF);
-
 	return len;
 }
 
@@ -159,10 +161,12 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
 uint32_t USBD_Recv(uint32_t ep)
 {
 	uint8_t c;
-	if (USBD_Recv(ep & 0xF, &c, 1) != 1)
-		return -1;
-	else
-		return c;
+	if (USBD_Recv(ep & 0xF, &c, 1) == 0)
+		c = -1;
+	if (UDD_FifoByteCount(ep & 0xF) == 0) {
+	        UDD_ReleaseRX(ep & 0xF);
+	}
+	return c;
 }
 
 //	Space in send EP
@@ -620,13 +624,11 @@ static void USB_ISR(void)
     }
 
 #ifdef CDC_ENABLED
-  	if (Is_udd_endpoint_interrupt(CDC_RX))
+        // Seems safer than previous and less specific Is_udd_endpoint_interrupt.
+  	if (Is_udd_out_received(CDC_RX))
 	{
-		udd_ack_out_received(CDC_RX);
-
-		// Handle received bytes
-		if (USBD_Available(CDC_RX))
-			SerialUSB.accept();
+	        //Handle received bytes
+		SerialUSB.accept();		
 	}
 
 	if (Is_udd_sof())
