@@ -1,6 +1,11 @@
 #include <DueTC.h>
 
-// Requires modified USB files: CDC.cpp, USBCore.cpp, USBAPI.h.
+// Requires modified USB files: CDC.cpp, USBCore.cpp, USBAPI.h.  
+// These are found in the "board support package". On linux they usually
+// install in a hidden file in the user's home directory, somewhere under:
+// ~/.arduino15/
+// and the above files are found in:
+// .arduino15/packages/arduino/hardware/sam/1.6.11/cores/arduino/USB/
 
 // Thanks to the following.
 // https://github.com/ivanseidel/DueTimer/issues/11
