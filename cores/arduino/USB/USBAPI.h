@@ -1,5 +1,7 @@
 /*
-  Copyright (c) 2012 Arduino.  All right reserved.
+  Copyright (c) 2012 Arduino.  
+  Copyright (c) 2017 Boris Barbour
+  All rights reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,7 +23,6 @@
 
 #if defined __cplusplus
 
-#include "RingBuffer.h"
 #include "Stream.h"
 
 //================================================================================
@@ -40,15 +41,53 @@ public:
 };
 extern USBDevice_ USBDevice;
 
+// Best to use a power of 2 to enable simplified modulo calculations
+// (the compiler will automatically use &). USB2 packets can contain
+// up to 1kb (isochronous mode), but usually less. The FIFOs seem to
+// be 512 bytes on the Due/SAM.
+#define CDC_SERIAL_BUFFER_SIZE	512
+
+// This could go into a separate header and file, but it's small and
+// users may need access to the size definition. Note that this is
+// (confusingly) distinct from the general RingBuffer declared in
+// RingBuffer.h. The implementation has been changed. Instead of
+// continuously taking the modulus of head and tail, we now have
+// ever-increasing longs, whose modulus is taken only to address the
+// buffer. This may add a small overhead, but ensures that the tail
+// overrunning the head can be detected even with interrupt and DMA
+// applications. As a minor side-effect, the buffer can hold one more
+// byte, since head==tail (empty) can now be distinguished from
+// head==tail+size (full). The use of 64-bit uints ensures that they
+// never overflow in the lifetime of the universe; 32-bit uints might
+// do so in a matter of hours or days at top rates.
+struct ring_buffer
+{
+	uint8_t buffer[CDC_SERIAL_BUFFER_SIZE];
+	volatile uint64_t head;
+	volatile uint64_t tail;
+};
+
 //================================================================================
 //================================================================================
 //	Serial over CDC (Serial1 is the physical port)
 
 class Serial_ : public Stream
 {
-private:
-	RingBuffer *_cdc_rx_buffer;
 public:
+        // The ring buffer implementation is public to allow user DMA access.
+	ring_buffer cdc_rx_buffer = { { 0 }, 0, 0};
+	// Standard arduino only schedules interrupts between "loop"
+	// iterations, so this is the default and the user will be
+	// responsible for scheduling reception of data via "accept"
+	// directly or indirectly by calling one of the "read"
+	// functions, which call "accept" (the read functions are not
+	// used during DMA applications). Even when interrupts are
+	// enabled, if the receive buffer doesn't have space when the
+	// interrupt service routine is called, it can be necessary to
+	// call "accept" manually to complete the transfer and prevent
+	// blocking.
+	void enableInterrupts();
+	void disableInterrupts();
 	void begin(uint32_t baud_count);
 	void begin(uint32_t baud_count, uint8_t config);
 	void end(void);
@@ -58,6 +97,7 @@ public:
 	virtual void accept(void);
 	virtual int peek(void);
 	virtual int read(void);
+	virtual int read(uint8_t *d, size_t t);
 	virtual void flush(void);
 	virtual size_t write(uint8_t);
 	virtual size_t write(const uint8_t *buffer, size_t size);

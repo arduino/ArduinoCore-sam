@@ -1,4 +1,5 @@
 /* Copyright (c) 2011, Peter Barrett
+** Copyright (c) 2017, Boris Barbour
 **
 ** Permission to use, copy, modify, and/or distribute this software for
 ** any purpose with or without fee is hereby granted, provided that the
@@ -21,22 +22,11 @@
 
 #ifdef CDC_ENABLED
 
-#define CDC_SERIAL_BUFFER_SIZE	512
-
 /* For information purpose only since RTS is not always handled by the terminal application */
 #define CDC_LINESTATE_DTR		0x01 // Data Terminal Ready
 #define CDC_LINESTATE_RTS		0x02 // Ready to Send
 
 #define CDC_LINESTATE_READY		(CDC_LINESTATE_RTS | CDC_LINESTATE_DTR)
-
-struct ring_buffer
-{
-	uint8_t buffer[CDC_SERIAL_BUFFER_SIZE];
-	volatile uint32_t head;
-	volatile uint32_t tail;
-};
-
-ring_buffer cdc_rx_buffer = { { 0 }, 0, 0};
 
 typedef struct
 {
@@ -173,45 +163,45 @@ void Serial_::end(void)
 
 void Serial_::accept(void)
 {
-	static uint32_t guard = 0;
-
-	// synchronized access to guard
-	do {
-		if (__LDREXW(&guard) != 0) {
-			__CLREX();
-			return;  // busy
-		}
-	} while (__STREXW(1, &guard) != 0); // retry until write succeed
-
+        // Use fifocon to synchronise. Leave if there is no data.
+        if (!Is_udd_fifocon(CDC_RX)) return;
+        // This rearms interrupt, but FIFO must be released before it
+        // can retrigger. Moved here from the interrupt service
+        // routine because we may come to this function directly.
+	if (Is_udd_out_received(CDC_RX)) udd_ack_out_received(CDC_RX);
 	ring_buffer *buffer = &cdc_rx_buffer;
-	uint32_t i = (uint32_t)(buffer->head+1) % CDC_SERIAL_BUFFER_SIZE;
-
-	// if we should be storing the received character into the location
-	// just before the tail (meaning that the head would advance to the
-	// current location of the tail), we're about to overflow the buffer
-	// and so we don't write the character or advance the head.
-	while (i != buffer->tail) {
-		uint32_t c;
-		if (!USBD_Available(CDC_RX)) {
-			udd_ack_fifocon(CDC_RX);
-			break;
-		}
-		c = USBD_Recv(CDC_RX);
-		// c = UDD_Recv8(CDC_RX & 0xF);
-		buffer->buffer[buffer->head] = c;
-		buffer->head = i;
-
-		i = (i + 1) % CDC_SERIAL_BUFFER_SIZE;
+	uint32_t b = CDC_SERIAL_BUFFER_SIZE;
+	uint32_t u = UDD_FifoByteCount(CDC_RX);
+	uint32_t s = b - (uint32_t)(buffer->head - buffer->tail);
+	uint32_t r = min(s, u);
+	while(r) {
+	        // May only be able to fill to the end of the buffer in first call.
+	        uint32_t h = (buffer->head)%b;
+	        uint32_t g = min(r, b-h);
+	        UDD_Recv(CDC_RX, &(buffer->buffer[h]), g);
+		r -= g;
+		buffer->head += g;
 	}
+	// Don't release FIFO if not all data was transferred.
+	if (!UDD_FifoByteCount(CDC_RX)) UDD_ReleaseRX(CDC_RX);
+}
 
-	// release the guard
-	guard = 0;
+void Serial_::enableInterrupts()
+{
+        udd_enable_out_received_interrupt(CDC_RX);
+	udd_enable_endpoint_interrupt(CDC_RX); 
+}
+
+void Serial_::disableInterrupts()
+{
+        udd_disable_out_received_interrupt(CDC_RX);
+	udd_disable_endpoint_interrupt(CDC_RX);
 }
 
 int Serial_::available(void)
 {
 	ring_buffer *buffer = &cdc_rx_buffer;
-	return (unsigned int)(CDC_SERIAL_BUFFER_SIZE + buffer->head - buffer->tail) % CDC_SERIAL_BUFFER_SIZE;
+	return (unsigned int)(buffer->head - buffer->tail);
 }
 
 int Serial_::availableForWrite(void)
@@ -231,13 +221,19 @@ int Serial_::peek(void)
 	}
 	else
 	{
-		return buffer->buffer[buffer->tail];
+	        uint32_t b = CDC_SERIAL_BUFFER_SIZE;
+		return buffer->buffer[(buffer->tail)%b];
 	}
 }
 
 int Serial_::read(void)
 {
 	ring_buffer *buffer = &cdc_rx_buffer;
+
+	// Give "accept" a chance to catch up if data is ready.
+	// Interrupt shouldn't be able to fire in this condition.
+        //if (Is_udd_fifocon(CDC_RX)) 
+	  accept();
 
 	// if the head isn't ahead of the tail, we don't have any characters
 	if (buffer->head == buffer->tail)
@@ -246,13 +242,40 @@ int Serial_::read(void)
 	}
 	else
 	{
-		unsigned char c = buffer->buffer[buffer->tail];
-		buffer->tail = (unsigned int)(buffer->tail + 1) % CDC_SERIAL_BUFFER_SIZE;
-		if (USBD_Available(CDC_RX))
-			accept();
+	        uint32_t b = CDC_SERIAL_BUFFER_SIZE;
+		unsigned char c = buffer->buffer[(buffer->tail)%b];
+		buffer->tail++;
 		return c;
 	}
 }
+
+int Serial_::read(uint8_t *d, size_t s) 
+{
+  	ring_buffer *buffer = &cdc_rx_buffer;
+	uint32_t b = CDC_SERIAL_BUFFER_SIZE;
+	uint32_t a = (uint32_t) (buffer->head - buffer->tail);
+	// Number of bytes to read is the smaller of those available and those requested.
+	uint32_t r = min(a, s);
+	uint32_t k = r;
+	// May reach end of buffer before completing transfer.
+	while(r) {
+	  uint32_t tm = (buffer->tail)%b;
+	  uint32_t g = min(r, b-tm);
+	  for (int i = 0 ; i < g; i++) { 
+	    d[i] = buffer->buffer[tm + i];
+	  }
+	  d += g;
+	  r -= g;
+	  buffer->tail += g;
+	}
+	// Give "accept" a chance to catch up if data is ready.
+	// Interrupt shouldn't be able to fire in this condition.
+	//        if (Is_udd_fifocon(CDC_RX)) {
+	  if ((a-k) < b) accept();
+	  //}
+	return k;
+}
+
 
 void Serial_::flush(void)
 {
