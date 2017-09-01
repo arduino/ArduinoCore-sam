@@ -18,12 +18,17 @@
 
 #include "WInterrupts.h"
 
-typedef void (*interruptCB)(void);
+typedef void (*interruptCB)(void*);
 
 static interruptCB callbacksPioA[32];
 static interruptCB callbacksPioB[32];
 static interruptCB callbacksPioC[32];
 static interruptCB callbacksPioD[32];
+
+static void* callbackParamsPioA[32];
+static void* callbackParamsPioB[32];
+static void* callbackParamsPioC[32];
+static void* callbackParamsPioD[32];
 
 /* Configure PIO interrupt sources */
 static void __initialize() {
@@ -60,8 +65,17 @@ static void __initialize() {
 	NVIC_EnableIRQ(PIOD_IRQn);
 }
 
+void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode) {
+  // THIS IMPLEMENTATION IS NOT PORTABLE!
+  //
+  // On ARM's calling convention, calling a function with more arguments than it declares
+  // is OK - The extra parameter is ignored and causes no harm
+  //
+  // This implementation takes advantage of it to support callbacks with and without parameters with minimum overhead.
+  attachInterruptParam(pin, (void (*)(void*))callback, mode, NULL);
+}
 
-void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode)
+void attachInterruptParam(uint32_t pin, void (*callback)(void*), uint32_t mode, void* param)
 {
 	static int enabled = 0;
 	if (!enabled) {
@@ -79,14 +93,19 @@ void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode)
 		;
 
 	// Set callback function
-	if (pio == PIOA)
+	if (pio == PIOA) {
 		callbacksPioA[pos] = callback;
-	if (pio == PIOB)
+		callbackParamsPioA[pos] = param;
+	} else if (pio == PIOB) {
 		callbacksPioB[pos] = callback;
-	if (pio == PIOC)
+		callbackParamsPioB[pos] = param;
+	} else if (pio == PIOC) {
 		callbacksPioC[pos] = callback;
-	if (pio == PIOD)
+		callbackParamsPioC[pos] = param;
+	} else if (pio == PIOD) {
 		callbacksPioD[pos] = callback;
+		callbackParamsPioD[pos] = param;
+	}
 
 	// Configure the interrupt mode
 	if (mode == CHANGE) {
@@ -139,7 +158,7 @@ void PIOA_Handler(void) {
   while((leading_zeros=__CLZ(isr))<32)
   {
     uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioA[pin]) callbacksPioA[pin]();
+    if(callbacksPioA[pin]) callbacksPioA[pin](callbackParamsPioA[pin]);
     isr=isr&(~(1<<pin));
   }
 }
@@ -150,7 +169,7 @@ void PIOB_Handler(void) {
   while((leading_zeros=__CLZ(isr))<32)
   {
     uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioB[pin]) callbacksPioB[pin]();
+    if(callbacksPioB[pin]) callbacksPioB[pin](callbackParamsPioB[pin]);
     isr=isr&(~(1<<pin));
   }
 }
@@ -161,7 +180,7 @@ void PIOC_Handler(void) {
   while((leading_zeros=__CLZ(isr))<32)
   {
     uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioC[pin]) callbacksPioC[pin]();
+    if(callbacksPioC[pin]) callbacksPioC[pin](callbackParamsPioC[pin]);
     isr=isr&(~(1<<pin));
   }
 }
@@ -172,7 +191,7 @@ void PIOD_Handler(void) {
   while((leading_zeros=__CLZ(isr))<32)
   {
     uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioD[pin]) callbacksPioD[pin]();
+    if(callbacksPioD[pin]) callbacksPioD[pin](callbackParamsPioD[pin]);
     isr=isr&(~(1<<pin));
   }
 }
