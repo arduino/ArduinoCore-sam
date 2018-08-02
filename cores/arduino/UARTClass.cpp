@@ -60,8 +60,8 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   // Configure mode
   _pUart->UART_MR = modeReg;
 
-  // Configure baudrate (asynchronous, no oversampling)
-  _pUart->UART_BRGR = (SystemCoreClock / dwBaudRate) >> 4;
+  // Configure baudrate (asynchronous, no oversampling, with rounding)
+  _pUart->UART_BRGR = ((SystemCoreClock / dwBaudRate)+8) >> 4;
 
   // Configure interrupts
   _pUart->UART_IDR = 0xFFFFFFFF;
