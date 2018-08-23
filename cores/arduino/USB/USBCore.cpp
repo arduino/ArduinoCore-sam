@@ -229,6 +229,11 @@ int USBD_SendControl(uint8_t flags __attribute__ ((unused)), const void* d, uint
 
 	if (_cmark < _cend)
 	{
+	    if (_cmark + len > _cend)
+	    {
+	        len = _cend - _cmark;
+	        length = len;
+	    }
 		while (len > 0)
 		{
 			sent = UDD_Send(EP0, data + pos, len);
