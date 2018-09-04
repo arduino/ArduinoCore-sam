@@ -109,6 +109,7 @@ static const unsigned char test_packet_buffer[] = {
 volatile uint32_t _usbConfiguration = 0;
 volatile uint32_t _usbInitialized = 0;
 uint32_t _usbSetInterface = 0;
+uint32_t _usbAlternateSetting = 0;
 uint32_t _cdcComposite = 0;
 
 //==================================================================
@@ -800,8 +801,9 @@ static void USB_ISR(void)
 			}
 			else if (SET_INTERFACE == r)
 			{
-                _usbSetInterface = setup.wValueL;
-				TRACE_CORE(puts(">>> EP0 Int: SET_INTERFACE\r\n");)
+                _usbSetInterface = setup.wIndex;
+                _usbAlternateSetting = setup.wValueL;
+                TRACE_CORE(printf(">>> EP0 Int: SET_INTERFACE interface=%d alternateSetting=%d\r\n",_usbSetInterface, _usbAlternateSetting);)
 			}
 		}
 		else
