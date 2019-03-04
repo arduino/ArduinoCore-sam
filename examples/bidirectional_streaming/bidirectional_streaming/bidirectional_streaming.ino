@@ -1,4 +1,4 @@
-#include <DueTC.h>
+#include "DueTC.h"
 
 // Requires modified USB files: CDC.cpp, USBCore.cpp, USBAPI.h.  
 // These are found in the "board support package". On linux they usually
@@ -56,14 +56,16 @@ uint32_t txc;
 bool errorFlag = 0;
 
 void blockingRead(uint8_t * b, uint32_t n) {
-  while (n) {
-    n -= SerialUSB.read(b, n);
+  int tr = n;   
+  while (tr) {
+    tr -= SerialUSB.read(b + n - tr, tr);
   } 
 }
 
 void blockingWrite(uint8_t * b, uint32_t n) {
-  while (n) {
-    n -= SerialUSB.write(b, n);
+  int tw = n;
+  while (tw) {
+    tw -= SerialUSB.write(b + n - tw, tw);
   } 
 }
 
