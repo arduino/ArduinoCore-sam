@@ -35,13 +35,20 @@ Speed test
 This a simple speed test. The Arduino sketch just reads available data on the native USB serial port using the new block read member and sends it back, in a loop. On the host computer, a large array is written to and read back from the serial tty by a short C++ program making use of the "select" call for efficient sequencing of the i/o operations. The port is specified as a parameter ("0" in the example).
 
 $ g++ -O3 -o speed_test speed_test.cpp
+
 $ time ./speed_test 0
+
 Test round-trip streaming with 100000000 bytes.
+
 /dev/ttyACM0
+
 Arrays equal!
 
+
 real    0m37.852s
+
 user    0m0.288s
+
 sys     0m1.576s
 
 100 Mb in ~40s is 2.5 Mb/s.
