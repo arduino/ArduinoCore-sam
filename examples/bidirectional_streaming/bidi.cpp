@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
   // Error and timestamp add 20 bytes.
   addr = (char*)mmap(NULL, eo+20, PROT_READ | PROT_WRITE, MAP_SHARED, f, 0);
   // Write nchan to file.
-  memcpy(addr+12, &h[3], 4);
+  std::memcpy(addr+12, &h[3], 4);
 
   // Write and read counters.
   int w = 0;

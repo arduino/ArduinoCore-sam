@@ -2,8 +2,9 @@
 import numpy as np
 import struct
 
-nS = 10000000
-d = np.random.randint(0, 2**12, nS)
+nS = 1000000
+d = np.arange(nS)%4096
+#d = np.random.randint(0, 2**12, nS)
 adcF = 42000000
 clkDiv = 42
 nchan = 2

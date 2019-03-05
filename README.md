@@ -63,24 +63,25 @@ Connect DAC0 to A0 and GND to A1 (for instance).
 
 $ python genfile.py 
 
+$ g++ -O3 -o bidi bidi.cpp
+
 $ time ./bidi test.dat /dev/ttyACM0 
 
 test.dat
 
-10000000 42000000 42 2
+1000000 42000000 42 2
 
-2019-03-04_01:05:30
+2019-03-05_12:26:33
 
+real    0m2.011s
 
-real    0m20.111s
+user    0m0.144s
 
-user    0m0.020s
+sys     0m1.802s
 
-sys     0m1.088s
+$ python display.py
 
-$python display.py
-
-header (10000000, 42000000, 42, 2)
+header (1000000, 42000000, 42, 2)
 
 error 0
 
