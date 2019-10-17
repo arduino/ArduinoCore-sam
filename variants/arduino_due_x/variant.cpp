@@ -336,20 +336,24 @@ void serialEvent3() __attribute__((weak));
 void serialEvent3() { }
 
 // IT handlers
+void USART0_Handler(void) __attribute__((weak)); 
 void USART0_Handler(void)
 {
   Serial1.IrqHandler();
 }
 
+void USART1_Handler(void) __attribute__((weak)); 
 void USART1_Handler(void)
 {
   Serial2.IrqHandler();
 }
 
+void USART3_Handler(void) __attribute__((weak)); 
 void USART3_Handler(void)
 {
   Serial3.IrqHandler();
 }
+
 
 // ----------------------------------------------------------------------------
 
