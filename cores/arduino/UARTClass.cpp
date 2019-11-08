@@ -31,6 +31,8 @@ UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *p
   _pUart=pUart;
   _dwIrq=dwIrq;
   _dwId=dwId;
+
+  _isr = NULL;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -166,13 +168,28 @@ size_t UARTClass::write( const uint8_t uc_data )
   return 1;
 }
 
+void UARTClass::attachInterrupt( USART_isr_t fn )
+{
+  _isr = fn;
+}
+
 void UARTClass::IrqHandler( void )
 {
   uint32_t status = _pUart->UART_SR;
 
   // Did we receive data?
-  if ((status & UART_SR_RXRDY) == UART_SR_RXRDY)
-    _rx_buffer->store_char(_pUart->UART_RHR);
+  if ((status & UART_SR_RXRDY) == UART_SR_RXRDY) {
+
+    // user function was attached -> call it with data and status byte 
+    if (_isr) {
+      _isr(_pUart->UART_RHR, status);
+    }
+    // no user function attached -> store in ring buffer
+    else {
+      _rx_buffer->store_char(_pUart->UART_RHR);
+    }
+
+  }
 
   // Do we need to keep sending data?
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 
@@ -189,7 +206,7 @@ void UARTClass::IrqHandler( void )
   }
 
   // Acknowledge errors
-  if ((status & UART_SR_OVRE) == UART_SR_OVRE || (status & UART_SR_FRAME) == UART_SR_FRAME)
+  if ((status & UART_SR_OVRE) == UART_SR_OVRE || (status & UART_SR_FRAME) == UART_SR_FRAME || (status & UART_SR_RXBRK) == UART_SR_RXBRK)
   {
     // TODO: error reporting outside ISR
     _pUart->UART_CR |= UART_CR_RSTSTA;

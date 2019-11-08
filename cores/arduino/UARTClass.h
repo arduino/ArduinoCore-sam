@@ -31,6 +31,9 @@
 #define SERIAL_8M1 UARTClass::Mode_8M1
 #define SERIAL_8S1 UARTClass::Mode_8S1
 
+// missing in CMSIS
+#define UART_SR_RXBRK (0x1u << 2)
+
 
 class UARTClass : public HardwareSerial
 {
@@ -60,6 +63,10 @@ class UARTClass : public HardwareSerial
 
     void IrqHandler(void);
 
+    typedef void (*USART_isr_t)(uint8_t data, uint32_t status);
+    void attachInterrupt( USART_isr_t fn );
+    void detachInterrupt() { attachInterrupt( (USART_isr_t) NULL ); };
+
     operator bool() { return true; }; // UART always active
 
   protected:
@@ -72,6 +79,7 @@ class UARTClass : public HardwareSerial
     IRQn_Type _dwIrq;
     uint32_t _dwId;
 
+    USART_isr_t  _isr;
 };
 
 #endif // _UART_CLASS_
