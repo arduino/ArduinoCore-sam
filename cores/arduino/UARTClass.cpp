@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "UARTClass.h"
+#include "Arduino.h"
 
 // Constructors ////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,8 @@ UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *p
   _dwIrq=dwIrq;
   _dwId=dwId;
 
-  _isr = NULL;
+  _isrRx = NULL;
+  _isrTx = NULL;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -168,9 +170,28 @@ size_t UARTClass::write( const uint8_t uc_data )
   return 1;
 }
 
-void UARTClass::attachInterrupt( USART_isr_t fn )
+void UARTClass::attachInterrupt_Receive( isrRx_t fn )
 {
-  _isr = fn;
+  // pause interrupts
+  uint8_t oldISR = ((__get_PRIMASK() & 0x1) == 0 && (__get_FAULTMASK() & 0x1) == 0); noInterrupts();
+  
+  // set custom function
+  _isrRx = fn;
+
+  // restore old interrupt setting
+  if (oldISR != 0) { interrupts(); }
+}
+
+void UARTClass::attachInterrupt_Send( isrTx_t fn )
+{
+  // pause interrupts
+  uint8_t oldISR = ((__get_PRIMASK() & 0x1) == 0 && (__get_FAULTMASK() & 0x1) == 0); noInterrupts();
+  
+  // set custom function for TX empty
+  _isrTx = fn;
+
+  // restore old interrupt setting
+  if (oldISR != 0) { interrupts(); }
 }
 
 void UARTClass::IrqHandler( void )
@@ -180,11 +201,11 @@ void UARTClass::IrqHandler( void )
   // Did we receive data?
   if ((status & UART_SR_RXRDY) == UART_SR_RXRDY) {
 
-    // user function was attached -> call it with data and status byte 
-    if (_isr) {
-      _isr(_pUart->UART_RHR, status);
+    // custom function was attached -> call it with data and status byte 
+    if (_isrRx) {
+      _isrRx(_pUart->UART_RHR, status);
     }
-    // no user function attached -> store in ring buffer
+    // no custom function attached -> store data in ring buffer
     else {
       _rx_buffer->store_char(_pUart->UART_RHR);
     }
@@ -202,6 +223,24 @@ void UARTClass::IrqHandler( void )
     {
       // Mask off transmit interrupt so we don't get it anymore
       _pUart->UART_IDR = UART_IDR_TXRDY;
+
+      // if custom routine attached, activate TXBUFE interrupt -> delay call until transmission finished
+      if (_isrTx != NULL) {
+        _pUart->UART_IER = UART_IER_TXEMPTY;
+      }
+    }
+
+  }
+
+  // Is data transmission finished? Used for call of attached custom function at end of transmission?
+  if ((status & UART_SR_TXEMPTY) == UART_SR_TXEMPTY)
+  {
+    // Mask off interrupt so we don't get it anymore
+    _pUart->UART_IDR = UART_IDR_TXEMPTY;
+    
+    // if custom routine attached, call it
+    if (_isrTx != NULL) {
+      _isrTx();
     }
   }
 
