@@ -168,7 +168,14 @@ size_t UARTClass::write( const uint8_t uc_data )
   {
      // Bypass buffering and send character directly
      _pUart->UART_THR = uc_data;
+
+     // if custom routine attached, activate TXBUFE interrupt -> delay call until transmission finished
+     // must be done here explicitely because UART_TXRDY interrupt is not activated here
+     if (_isrTx != NULL) {
+       _pUart->UART_IER = UART_IER_TXEMPTY;
+     }
   }
+
   return 1;
 }
 
