@@ -684,9 +684,13 @@ static void USB_ISR(void)
                     // Send the endpoint status
                     // Check if the endpoint if currently halted
                     if( isEndpointHalt == 1 )
-                    UDD_Send8(EP0, 1); // TODO
+                    {
+                        UDD_Send8(EP0, 1); // TODO
+                    }
                     else
-                    UDD_Send8(EP0, 0); // TODO
+                    {
+                        UDD_Send8(EP0, 0); // TODO
+                    }
                     UDD_Send8(EP0, 0);
                 }
             }
@@ -697,9 +701,13 @@ static void USB_ISR(void)
                 {
                     // Enable remote wake-up and send a ZLP
                     if( isRemoteWakeUpEnabled == 1 )
-                    UDD_Send8(EP0, 1);
+                    {
+                        UDD_Send8(EP0, 1);
+                    }
                     else
-                    UDD_Send8(EP0, 0);
+                    {
+                        UDD_Send8(EP0, 0);
+                    }
                     UDD_Send8(EP0, 0);
                 }
                 else // if( setup.wValueL == 0) // ENDPOINTHALT
