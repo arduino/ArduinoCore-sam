@@ -311,7 +311,6 @@ Serial_::operator bool()
 		result = true;
 	}
 
-	delay(10);
 	return result;
 }
 
