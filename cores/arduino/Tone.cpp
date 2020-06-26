@@ -14,7 +14,6 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-
     Tone implementation for the Arduino Due / SAM boards, written by Mikhail Khrenov
     (@redrussianbear, mkhrenov) on 2020/06/25, based on Tone for SAMD boards, with
     info on Due Timer Counters taken from "Arduino Due Timers" by Jeff ko7m.
