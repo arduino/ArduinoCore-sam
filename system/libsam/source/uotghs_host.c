@@ -360,7 +360,7 @@ void UHD_Pipe_Free(uint32_t ul_pipe)
 uint32_t UHD_Pipe_Read(uint32_t ul_pipe, uint32_t ul_size, uint8_t* data)
 {
 	uint8_t *ptr_ep_data = 0;
-	uint8_t nb_byte_received = 0;
+	uint16_t nb_byte_received = 0; //counts bytes received from pipe (max. 1024 on SAM3x8E)
 	uint32_t ul_nb_trans = 0;
 
 	// Get information to read data
