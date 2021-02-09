@@ -335,6 +335,9 @@ USARTClass Serial3(USART3, USART3_IRQn, ID_USART3, &rx_buffer4, &tx_buffer4);
 void serialEvent3() __attribute__((weak));
 void serialEvent3() { }
 
+void serialEventUSB() __attribute__((weak));
+void serialEventUSB() { }
+
 // IT handlers
 void USART0_Handler(void)
 {
@@ -359,6 +362,7 @@ void serialEventRun(void)
   if (Serial1.available()) serialEvent1();
   if (Serial2.available()) serialEvent2();
   if (Serial3.available()) serialEvent3();
+  if (SerialUSB.available()) serialEventUSB();
 }
 
 // ----------------------------------------------------------------------------
