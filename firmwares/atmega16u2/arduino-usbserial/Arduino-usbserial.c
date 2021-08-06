@@ -161,8 +161,8 @@ int main(void)
 			{
 				// SAM3X RESET/ERASE Sequence
 				// --------------------------
-				// Between 60 and 120: do erase
-				if (ResetTimer >= 60 && ResetTimer <= 120) {
+				// Between 60 and 120: do erase, 60 count = 250ms
+				if (ResetTimer >= 60 && ResetTimer <= 180) {
 					setErasePin(true);
 				} else {
 					setErasePin(false);
@@ -300,7 +300,7 @@ void EVENT_CDC_Device_ControLineStateChanged(USB_ClassInfo_CDC_Device_t* const C
 
 	if (Selected1200BPS) {
 		/* Start Erase / Reset procedure when receiving the magic "1200" baudrate */
-		ResetTimer = 120;
+		ResetTimer = 180;
 	} else if (!PreviousDTRState && CurrentDTRState) {
 		/* Reset on rising edge of DTR */
 		ResetTimer = 50;
