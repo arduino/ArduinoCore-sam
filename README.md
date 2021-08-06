@@ -1,3 +1,7 @@
+This is a fork from the original repository for Arduino Due. This work solves the problem that some boards cannot be uploaded by the programming port.
+
+The main changes are located in firmwares/atmega16u2.
+
 # Arduino Core for SAM3X CPU
 
 This repository contains the source code and configuration files of the Arduino Core for Atmel's SAM3X processor (used on the [Arduino Due](https://www.arduino.cc/en/Main/ArduinoBoardDue) board).
