@@ -287,7 +287,7 @@ extern const PinDescription g_APinDescription[]=
   // 91 - CAN1 all pins
   { PIOB, PIO_PB15A_CANRX1|PIO_PB14A_CANTX1, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT, (PIN_ATTR_DIGITAL|PIN_ATTR_COMBO), NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER },
   // 92 - USART2 (Serial4) all pins
-  { PIOB, PIO_PB20A_TXD2|PIO_PB21A_RXD2, ID_PIOB, PIO_PERIPH_B, PIO_DEFAULT, (PIN_ATTR_DIGITAL|PIN_ATTR_COMBO), NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER },
+  { PIOB, PIO_PB20A_TXD2|PIO_PB21A_RXD2, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT, (PIN_ATTR_DIGITAL|PIN_ATTR_COMBO), NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER },
   // END
   { NULL, 0, 0, PIO_NOT_A_PIN, PIO_DEFAULT, 0, NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER }
 } ;
@@ -426,11 +426,12 @@ void init( void )
     g_APinDescription[PINS_USART3].ulPinType,
     g_APinDescription[PINS_USART3].ulPin,
     g_APinDescription[PINS_USART3].ulPinConfiguration);
+    
   PIO_Configure(
-    g_APinDescription[PINS_USART4].pPort,
-    g_APinDescription[PINS_USART4].ulPinType,
-    g_APinDescription[PINS_USART4].ulPin,
-    g_APinDescription[PINS_USART4].ulPinConfiguration);    
+    g_APinDescription[PINS_USART2].pPort,
+    g_APinDescription[PINS_USART2].ulPinType,
+    g_APinDescription[PINS_USART2].ulPin,
+    g_APinDescription[PINS_USART2].ulPinConfiguration);    
 
   // Initialize USB pins
   PIO_Configure(

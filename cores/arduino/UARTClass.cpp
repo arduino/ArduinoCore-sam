@@ -67,18 +67,6 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   _pUart->UART_IDR = 0xFFFFFFFF;
   _pUart->UART_IER = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME;
   
-  /*
-    Originally USART2 is used as ADC.
-    Override this configuration if user has initialized USART2 (serial4)
-    This means that the ADC functionality will no longer work
-    TODO: Restore functionality when calling End
-  */
-  if((Usart*)_pUart == USART2)
-  {
-    /* Select Peripheral A for USART 2 pins */
-    PIOB->PIO_ABSR &= (~(PIO_PB20A_TXD2 | PIO_PB21A_RXD2)) ;
-  }
-
   // Enable UART interrupt in NVIC
   NVIC_EnableIRQ(_dwIrq);
 
