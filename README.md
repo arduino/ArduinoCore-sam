@@ -1,4 +1,12 @@
-# Arduino Core for SAM3X CPU
+# Enhanced Arduino Core for SAM3X CPU
+
+This repository is based from the [Arduio Sam SDK for cortex-m3](https://github.com/arduino/ArduinoCore-sam). The sdk was modified to include the following features which are not supported by the main repository:
+
+- Attachment of a callback function to the IRQ handler of USART/UART peripherals. This comes handy when you need to process data in real-time.
+- Addition of USART2 as Serial4.
+- Updated Compiler to version 10.3-2021.10 with a [modification](https://github.com/vChavezB/ArduinoBoards/blob/master/SAM3X/package_vchavezb_sam-enhanced.json) of the Arduino package "Arduino SAM Boards (32-bits ARM Cortex-M3)".
+
+The rest of this readme has been kept unmodified and is as-is from the original repo.
 
 This repository contains the source code and configuration files of the Arduino Core for Atmel's SAM3X processor (used on the [Arduino Due](https://www.arduino.cc/en/Main/ArduinoBoardDue) board).
 
