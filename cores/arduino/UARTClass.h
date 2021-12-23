@@ -59,7 +59,10 @@ class UARTClass : public HardwareSerial
     uint32_t getInterruptPriority();
 
     void IrqHandler(void);
-
+    typedef void (*rx_irq_cb)(uint8_t frame,void * args);
+    
+    void attachRxIrq(rx_irq_cb cb,void * args);
+    
     operator bool() { return true; }; // UART always active
 
   protected:
@@ -69,6 +72,8 @@ class UARTClass : public HardwareSerial
     RingBuffer *_tx_buffer;
 
     Uart* _pUart;
+    rx_irq_cb pRx_irq_cb;
+    void * rx_irq_args;
     IRQn_Type _dwIrq;
     uint32_t _dwId;
 

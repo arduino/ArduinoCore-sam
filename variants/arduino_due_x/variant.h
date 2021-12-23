@@ -170,7 +170,8 @@ static const uint8_t SCL1 = PIN_WIRE1_SCL;
 #define PINS_USART1          (83u)
 // Serial3
 #define PINS_USART3          (84u)
-
+// Serial4
+#define PINS_USART4          (92u)
 /*
  * USB Interfaces
  */
@@ -252,7 +253,7 @@ extern UARTClass Serial;
 extern USARTClass Serial1;
 extern USARTClass Serial2;
 extern USARTClass Serial3;
-
+extern USARTClass Serial4;
 #endif
 
 // These serial port names are intended to allow libraries and architecture-neutral

@@ -66,6 +66,18 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   // Configure interrupts
   _pUart->UART_IDR = 0xFFFFFFFF;
   _pUart->UART_IER = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME;
+  
+  /*
+    Originally USART2 is used as ADC.
+    Override this configuration if user has initialized USART2 (serial4)
+    This means that the ADC functionality will no longer work
+    TODO: Restore functionality when calling End
+  */
+  if((Usart*)_pUart == USART2)
+  {
+    PIOB->PIO_ABSR = (0x0u);
+    PIOD->PIO_ABSR = PIO_ABSR_P4 | PIO_ABSR_P5;
+  }
 
   // Enable UART interrupt in NVIC
   NVIC_EnableIRQ(_dwIrq);
@@ -172,7 +184,14 @@ void UARTClass::IrqHandler( void )
 
   // Did we receive data?
   if ((status & UART_SR_RXRDY) == UART_SR_RXRDY)
-    _rx_buffer->store_char(_pUart->UART_RHR);
+  {
+    uint8_t uart_rx_frame=_pUart->UART_RHR;
+    _rx_buffer->store_char(uart_rx_frame);
+    if(pRx_irq_cb != nullptr)
+    {
+        pRx_irq_cb(uart_rx_frame,rx_irq_args);
+    }
+  }
 
   // Do we need to keep sending data?
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 
@@ -196,3 +215,8 @@ void UARTClass::IrqHandler( void )
   }
 }
 
+void UARTClass::attachRxIrq(rx_irq_cb cb,void * args)
+{
+    pRx_irq_cb = cb;
+    rx_irq_args = args;
+}
