@@ -1,5 +1,5 @@
 
-arduino_due_x_dbg.name=Arduino Due (Programming Port)
+arduino_due_x_dbg.name=Arduino Due Enhanced (Programming Port)
 arduino_due_x_dbg.vid.0=0x2341
 arduino_due_x_dbg.pid.0=0x003d
 arduino_due_x_dbg.vid.1=0x2A03
@@ -23,7 +23,7 @@ arduino_due_x_dbg.build.variant_system_lib=libsam_sam3x8e_gcc_rel.a
 arduino_due_x_dbg.build.vid=0x2341
 arduino_due_x_dbg.build.pid=0x003e
 
-arduino_due_x.name=Arduino Due (Native USB Port)
+arduino_due_x.name=Arduino Due Enhanced (Native USB Port)
 arduino_due_x.vid.0=0x2341
 arduino_due_x.pid.0=0x003e
 arduino_due_x.vid.1=0x2A03
