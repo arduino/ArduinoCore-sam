@@ -75,8 +75,8 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   */
   if((Usart*)_pUart == USART2)
   {
-    PIOB->PIO_ABSR = (0x0u);
-    PIOD->PIO_ABSR = PIO_ABSR_P4 | PIO_ABSR_P5;
+    /* Select Peripheral A for USART 2 pins */
+    PIOB->PIO_ABSR &= (~(PIO_PB20A_TXD2 | PIO_PB21A_RXD2)) ;
   }
 
   // Enable UART interrupt in NVIC
