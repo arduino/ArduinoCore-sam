@@ -14,6 +14,8 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+  Modified 23 November 2019 by Georg Icking-Konert
 */
 
 #ifndef _UART_CLASS_
@@ -31,6 +33,8 @@
 #define SERIAL_8M1 UARTClass::Mode_8M1
 #define SERIAL_8S1 UARTClass::Mode_8S1
 
+// missing in CMSIS
+#define UART_SR_RXBRK (0x1u << 2)
 
 class UARTClass : public HardwareSerial
 {
@@ -60,6 +64,13 @@ class UARTClass : public HardwareSerial
 
     void IrqHandler(void);
 
+    typedef void (* isrRx_t)(uint8_t data, uint32_t status, void* args);
+    typedef void (* isrTx_t)( void );
+    void attachInterrupt_Receive( isrRx_t fn, void* args = NULL );
+    void detachInterrupt_Receive( void ) { attachInterrupt_Receive( (isrRx_t) NULL); };
+    void attachInterrupt_Send( isrTx_t fn );
+    void detachInterrupt_Send( void ) { attachInterrupt_Send( (isrTx_t) NULL); };
+
     operator bool() { return true; }; // UART always active
 
   protected:
@@ -72,6 +83,9 @@ class UARTClass : public HardwareSerial
     IRQn_Type _dwIrq;
     uint32_t _dwId;
 
+    isrRx_t  _isrRx;
+    isrTx_t  _isrTx;
+    void*    _rxArgs;
 };
 
 #endif // _UART_CLASS_
