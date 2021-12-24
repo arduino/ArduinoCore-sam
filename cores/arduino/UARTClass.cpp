@@ -37,6 +37,7 @@ UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *p
 
   _isrRx = NULL;
   _isrTx = NULL;
+  _rxArgs = NULL;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -179,13 +180,14 @@ size_t UARTClass::write( const uint8_t uc_data )
   return 1;
 }
 
-void UARTClass::attachInterrupt_Receive( isrRx_t fn )
+void UARTClass::attachInterrupt_Receive( isrRx_t fn, void* args )
 {
   // pause interrupts
   uint8_t oldISR = ((__get_PRIMASK() & 0x1) == 0 && (__get_FAULTMASK() & 0x1) == 0); noInterrupts();
   
-  // set custom function
+  // set custom function, and store argument pointer
   _isrRx = fn;
+  _rxArgs = args;
 
   // restore old interrupt setting
   if (oldISR != 0) { interrupts(); }
@@ -212,7 +214,7 @@ void UARTClass::IrqHandler( void )
 
     // custom function was attached -> call it with data and status byte 
     if (_isrRx) {
-      _isrRx(_pUart->UART_RHR, status);
+      _isrRx(_pUart->UART_RHR, status, _rxArgs);
     }
     // no custom function attached -> store data in ring buffer
     else {

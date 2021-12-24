@@ -64,9 +64,9 @@ class UARTClass : public HardwareSerial
 
     void IrqHandler(void);
 
-    typedef void (* isrRx_t)(uint8_t data, uint32_t status);
+    typedef void (* isrRx_t)(uint8_t data, uint32_t status, void* args);
     typedef void (* isrTx_t)( void );
-    void attachInterrupt_Receive( isrRx_t fn );
+    void attachInterrupt_Receive( isrRx_t fn, void* args = NULL );
     void detachInterrupt_Receive( void ) { attachInterrupt_Receive( (isrRx_t) NULL); };
     void attachInterrupt_Send( isrTx_t fn );
     void detachInterrupt_Send( void ) { attachInterrupt_Send( (isrTx_t) NULL); };
@@ -85,6 +85,7 @@ class UARTClass : public HardwareSerial
 
     isrRx_t  _isrRx;
     isrTx_t  _isrTx;
+    void*    _rxArgs;
 };
 
 #endif // _UART_CLASS_
