@@ -37,7 +37,7 @@ extern void init( void ) ;
  *
  * \return Number of milliseconds since the program started (uint32_t)
  */
-extern uint32_t millis( void ) ;
+extern unsigned long millis( void ) ;
 
 /**
  * \brief Returns the number of microseconds since the Arduino board began running the current program.
@@ -49,23 +49,23 @@ extern uint32_t millis( void ) ;
  *
  * \note There are 1,000 microseconds in a millisecond and 1,000,000 microseconds in a second.
  */
-extern uint32_t micros( void ) ;
+extern unsigned long micros( void ) ;
 
 /**
  * \brief Pauses the program for the amount of time (in miliseconds) specified as parameter.
  * (There are 1000 milliseconds in a second.)
  *
- * \param dwMs the number of milliseconds to pause (uint32_t)
+ * \param ms the number of milliseconds to pause (unsigned long)
  */
-extern void delay( uint32_t dwMs ) ;
+extern void delay( unsigned long ms ) ;
 
 /**
  * \brief Pauses the program for the amount of time (in microseconds) specified as parameter.
  *
- * \param dwUs the number of microseconds to pause (uint32_t)
+ * \param dwUs the number of microseconds to pause (unsigned long)
  */
-static inline void delayMicroseconds(uint32_t) __attribute__((always_inline, unused));
-static inline void delayMicroseconds(uint32_t usec){
+static inline void delayMicroseconds(unsigned int) __attribute__((always_inline, unused));
+static inline void delayMicroseconds(unsigned int usec){
     /*
      * Based on Paul Stoffregen's implementation
      * for Teensy 3.0 (http://www.pjrc.com/)
