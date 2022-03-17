@@ -300,6 +300,13 @@ static __INLINE void __set_FPSCR(uint32_t fpscr)
 #elif defined ( __GNUC__ ) /*------------------ GNU Compiler ---------------------*/
 /* GNU gcc specific functions */
 
+/* C++17 removes register keyword */
+#if __cplusplus >= 201703L
+# define DEPRECATED_REGISTER
+#else
+# define DEPRECATED_REGISTER register
+#endif
+
 /** \brief  Enable IRQ Interrupts
 
   This function enables IRQ interrupts by clearing the I-bit in the CPSR.
@@ -402,7 +409,7 @@ __attribute__( ( always_inline ) ) static __INLINE uint32_t __get_xPSR(void)
  */
 __attribute__( ( always_inline ) ) static __INLINE uint32_t __get_PSP(void)
 {
-  register uint32_t result;
+  DEPRECATED_REGISTER uint32_t result;
 
   __ASM volatile ("MRS %0, psp\n"  : "=r" (result) );
   return(result);
@@ -429,7 +436,7 @@ __attribute__( ( always_inline ) ) static __INLINE void __set_PSP(uint32_t topOf
  */
 __attribute__( ( always_inline ) ) static __INLINE uint32_t __get_MSP(void)
 {
-  register uint32_t result;
+  DEPRECATED_REGISTER uint32_t result;
 
   __ASM volatile ("MRS %0, msp\n" : "=r" (result) );
   return(result);
@@ -590,6 +597,8 @@ __attribute__( ( always_inline ) ) static __INLINE void __set_FPSCR(uint32_t fps
 }
 
 #endif /* (__CORTEX_M == 0x04) */
+
+#undef DEPRECATED_REGISTER
 
 
 #elif defined ( __TASKING__ ) /*------------------ TASKING Compiler --------------*/

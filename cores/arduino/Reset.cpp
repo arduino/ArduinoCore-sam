@@ -23,7 +23,11 @@
 extern "C" {
 #endif
 
+#if !defined(__clang__) || defined(__mips__)
 __attribute__ ((long_call, section (".ramfunc")))
+#else
+__attribute__ ((section (".ramfunc")))
+#endif
 void banzai() {
 	// Disable all interrupts
 	__disable_irq();
