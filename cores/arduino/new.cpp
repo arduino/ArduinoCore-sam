@@ -34,3 +34,14 @@ void operator delete[](void * ptr) {
   free(ptr);
 }
 
+/*
+Fix for C++>14
+https://forum.arduino.cc/t/undefined-reference-to-operator-delete-void-unsigned-int/620428
+*/
+void operator delete(void* ptr, std::size_t) _GLIBCXX_USE_NOEXCEPT {
+    delete ptr;
+}
+
+void operator delete[](void* ptr, std::size_t) _GLIBCXX_USE_NOEXCEPT {
+    delete[] ptr;
+}
