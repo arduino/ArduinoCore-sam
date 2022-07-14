@@ -13,8 +13,10 @@ Add the following url to your Arduino package manager
 
 https://raw.githubusercontent.com/vChavezB/ArduinoCore-sam/master/package.json
 
-
+---
 The rest of this readme has been kept unmodified and is as-is from the original repo.
+
+---
 
 This repository contains the source code and configuration files of the Arduino Core for Atmel's SAM3X processor (used on the [Arduino Due](https://www.arduino.cc/en/Main/ArduinoBoardDue) board).
 
