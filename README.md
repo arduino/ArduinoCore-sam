@@ -11,7 +11,9 @@ This repository is based from the [Arduio Sam SDK for cortex-m3](https://github.
 
 Add the following url to your Arduino package manager
 
-https://raw.githubusercontent.com/vChavezB/ArduinoCore-sam/master/package.json
+```
+https://raw.githubusercontent.com/vChavezB/ArduinoBoards/master/SAM3X/package_vchavezb_sam-enhanced.json
+```
 
 ---
 The rest of this readme has been kept unmodified and is as-is from the original repo.
