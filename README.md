@@ -4,7 +4,8 @@ This repository is based from the [Arduio Sam SDK for cortex-m3](https://github.
 
 - Attachment of a callback function to the IRQ handler of USART/UART peripherals. This comes handy when you need to process data in real-time.
 - Addition of USART2 as Serial4.
-- Updated Compiler to version 10.3-2021.10 with a [modification](https://github.com/vChavezB/ArduinoBoards/blob/master/SAM3X/package_vchavezb_sam-enhanced.json) of the Arduino package "Arduino SAM Boards (32-bits ARM Cortex-M3)".
+- Updated GCC to version 11.2.1. Requirse to use the following custom [board package](https://github.com/vChavezB/ArduinoBoards/blob/master/SAM3X/package_vchavezb_sam-enhanced.json).
+- Using by default C++20 and C17
 
 The rest of this readme has been kept unmodified and is as-is from the original repo.
 
