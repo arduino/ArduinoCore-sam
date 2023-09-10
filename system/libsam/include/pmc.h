@@ -60,8 +60,10 @@ extern "C" {
 /** Mask to access fast startup input */
 #define PMC_FAST_STARTUP_Msk    (0xFFFFu)
 
+
 /** PMC_WPMR Write Protect KEY, unlock it */
 #define PMC_WPMR_WPKEY_VALUE    PMC_WPMR_WPKEY((uint32_t) 0x504D43)
+//#define PMC_WPMR_WPKEY_VALUE    PMC_WPMR_WPKEY_PASSWD // PMC_WPMR_WPKEY was missing from atmel studio cmsis
 
 /** Using external oscillator */
 #define PMC_OSC_XTAL            0
@@ -72,6 +74,7 @@ extern "C" {
 #define PMC_PCK_0               0 /* PCK0 ID */
 #define PMC_PCK_1               1 /* PCK1 ID */
 #define PMC_PCK_2               2 /* PCK2 ID */
+
 
 /**
  * \name Master clock (MCK) Source and Prescaler configuration

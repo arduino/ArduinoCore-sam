@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
  *         SAM Software Package License
  * ----------------------------------------------------------------------------
- * Copyright (c) 2012, Atmel Corporation
+ * Copyright (c) 2014, Atmel Corporation
  *
  * All rights reserved.
  *
@@ -26,18 +26,41 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
-
 #ifndef _SAM4S_
 #define _SAM4S_
 
-#if defined __SAM4S8B__
-  #include "sam4s8b.h"
-#elif defined __SAM4S8C__
-  #include "sam4s8c.h"
-#elif defined __SAM4S16B__
-  #include "sam4s16b.h"
-#elif defined __SAM4S16C__
-  #include "sam4s16c.h"
+#if defined (__SAM4S16C__)
+#include "sam4s16c.h"
+#elif defined (__SAM4S16B__)
+#include "sam4s16b.h"
+#elif defined (__SAM4S2A__)
+#include "sam4s2a.h"
+#elif defined (__SAM4S2B__)
+#include "sam4s2b.h"
+#elif defined (__SAM4S2C__)
+#include "sam4s2c.h"
+#elif defined (__SAM4S4A__)
+#include "sam4s4a.h"
+#elif defined (__SAM4S4B__)
+#include "sam4s4b.h"
+#elif defined (__SAM4S4C__)
+#include "sam4s4c.h"
+#elif defined (__SAM4S8C__)
+#include "sam4s8c.h"
+#elif defined (__SAM4S8B__)
+#include "sam4s8b.h"
+#elif defined (__SAM4SA16B__)
+#include "sam4sa16b.h"
+#elif defined (__SAM4SA16C__)
+#include "sam4sa16c.h"
+#elif defined (__SAM4SD16B__)
+#include "sam4sd16b.h"
+#elif defined (__SAM4SD16C__)
+#include "sam4sd16c.h"
+#elif defined (__SAM4SD32B__)
+#include "sam4sd32b.h"
+#elif defined (__SAM4SD32C__)
+#include "sam4sd32c.h"
 #else
   #error Library does not support the specified device.
 #endif

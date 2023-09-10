@@ -51,6 +51,10 @@ extern "C" {
 
 /* Definitions for ADC resolution */
 #if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#define ADC_MR_LOWRES_BITS_12 (0x0u << 4) /**< \brief (ADC_MR) 12-bit resolution */
+#define ADC_MR_LOWRES_BITS_10 (0x0u << 5) /**< \brief (ADC_MR) 10-bit resolution */
+#define ADC_MR_LOWRES ADC_MR_LOWRES_BITS_12 /**< \brief (ADC_MR) Resolution */
+
 enum adc_resolution_t {
 	ADC_10_BITS = ADC_MR_LOWRES_BITS_10,    /* ADC 10-bit resolution */
 	ADC_12_BITS = ADC_MR_LOWRES_BITS_12     /* ADC 12-bit resolution */
@@ -66,6 +70,7 @@ enum adc_resolution_t {
 	ADC_10_BITS = ADC12B_MR_LOWRES_BITS_10, /* ADC 10-bit resolution */
  	ADC_12_BITS = ADC12B_MR_LOWRES_BITS_12  /* ADC 12-bit resolution */
 } ;
+
 #endif
 
 /* Definitions for ADC trigger */

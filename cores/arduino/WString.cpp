@@ -742,11 +742,6 @@ long String::toInt(void) const
 
 float String::toFloat(void) const
 {
-	return float(toDouble());
-}
-
-double String::toDouble(void) const
-{
-	if (buffer) return atof(buffer);
+	if (buffer) return float(atof(buffer));
 	return 0;
 }

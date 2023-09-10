@@ -78,7 +78,7 @@
  *        Headers
  *----------------------------------------------------------------------------*/
 
-#include "chip.h"
+#include "../chip.h"
 
 #include <stdlib.h>
 #include <assert.h>

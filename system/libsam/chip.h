@@ -42,9 +42,9 @@
  * Peripherals
  */
 #include "include/adc.h"
-#if (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
-#include "include/dacc.h"
-#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
+//#if (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)|| (SAM4S_SERIES) && !(__SAM3S4A__)&& !(__SAM4S4A__)
+//#include "include/dacc.h"
+//#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
 
 #include "include/interrupt_sam_nvic.h"
 #include "include/efc.h"
@@ -63,8 +63,14 @@
 #include "include/wdt.h"
 
 #include "include/timetick.h"
+#ifndef __SAM4S4A__
 #include "include/USB_device.h"
 #include "include/USB_host.h"
+#endif
+
+#ifdef __SAM4S4A__
+#include "include/udp_device.h"
+#endif
 
 #if (SAM3XA_SERIES)
 #include "include/can.h"

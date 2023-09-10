@@ -19,17 +19,33 @@
 
 #define ARDUINO_MAIN
 #include "Arduino.h"
+#include "Reset.h"
 
+//boolean sysTickHook(void);
+//extern boolean tickInterrupt(void);
 /*
- * Cortex-M3 Systick IT handler
+ * Cortex-M3/M4 Systick IT handler
  */
-/*
-extern void SysTick_Handler( void )
+extern void SysTick_Handler(void)
 {
-  // Increment tick count each ms
-  TimeTick_Increment() ;
+ //if (sysTickHook()==false)
+ //   return;
+
+	tickReset();
+
+	// Increment tick count each ms
+	TimeTick_Increment();
 }
-*/
+
+
+
+//extern void SysTick_Handler( void )
+//{
+  // Increment tick count each ms
+//  TimeTick_Increment() ;
+//}
+
+
 
 // Weak empty variant initialization function.
 // May be redefined by variant files.
@@ -64,3 +80,4 @@ int main( void )
 
 	return 0;
 }
+

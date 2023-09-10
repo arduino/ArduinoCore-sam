@@ -43,6 +43,8 @@
 
 #include <string.h>
 #include "ssc.h"
+//#include <include/ssc.h>
+
 
 /// @cond 0
 /**INDENT-OFF**/
@@ -64,7 +66,6 @@ extern "C" {
  * @{
  */
 
-#define SSC_WPKEY SSC_WPMR_WPKEY(0x535343)
 
 /**
  * \brief Set up clock.
@@ -112,13 +113,13 @@ void ssc_i2s_set_transmitter(Ssc *p_ssc, uint32_t ul_mode,
 	/* Data start: MonoLeft-Falling, MonoRight-Rising, Stero-Edge. */
 	switch (ul_ch_mode) {
 	case SSC_AUDIO_MONO_RIGHT:
-		tx_clk_option.ul_start_sel = SSC_TCMR_START_RF_RISING;
+		tx_clk_option.ul_start_sel = SSC_TCMR_START_TF_RISING;
 		break;
 	case SSC_AUDIO_MONO_LEFT:
-		tx_clk_option.ul_start_sel = SSC_TCMR_START_RF_FALLING;
+		tx_clk_option.ul_start_sel = SSC_TCMR_START_TF_FALLING;
 		break;
 	case SSC_AUDIO_STERO:
-		tx_clk_option.ul_start_sel = SSC_TCMR_START_RF_EDGE;
+		tx_clk_option.ul_start_sel = SSC_TCMR_START_TF_EDGE;
 		break;
 	}
 	if (ul_mode & SSC_I2S_MASTER_OUT) {
@@ -133,7 +134,7 @@ void ssc_i2s_set_transmitter(Ssc *p_ssc, uint32_t ul_mode,
 		tx_clk_option.ul_cks = SSC_TCMR_CKS_MCK;
 		tx_clk_option.ul_cko = SSC_TCMR_CKO_CONTINUOUS;
 		tx_clk_option.ul_cki = 0;
-		tx_clk_option.ul_ckg = SSC_RCMR_CKG_NONE;
+		tx_clk_option.ul_ckg = SSC_RCMR_CKG_CONTINUOUS;
 		/* The delay is defined by I2S protocol. */
 		tx_clk_option.ul_sttdly = 1;
 		tx_clk_option.ul_period = ul_datlen - 1;
@@ -149,7 +150,7 @@ void ssc_i2s_set_transmitter(Ssc *p_ssc, uint32_t ul_mode,
 		tx_clk_option.ul_cks = ul_cks;
 		tx_clk_option.ul_cko = SSC_TCMR_CKO_NONE;
 		tx_clk_option.ul_cki = 0;
-		tx_clk_option.ul_ckg = SSC_RCMR_CKG_NONE;
+		tx_clk_option.ul_ckg = SSC_RCMR_CKG_CONTINUOUS;
 		tx_clk_option.ul_sttdly = 1;
 		tx_clk_option.ul_period = 0;
 
@@ -213,7 +214,7 @@ void ssc_i2s_set_receiver(Ssc *p_ssc, uint32_t ul_mode,
 		rx_clk_option.ul_cks = SSC_TCMR_CKS_MCK;
 		rx_clk_option.ul_cko = SSC_TCMR_CKO_CONTINUOUS;
 		rx_clk_option.ul_cki = 0;
-		rx_clk_option.ul_ckg = SSC_RCMR_CKG_NONE;
+		rx_clk_option.ul_ckg = SSC_RCMR_CKG_CONTINUOUS;
 		rx_clk_option.ul_sttdly = 1;
 		rx_clk_option.ul_period = ul_datlen - 1;
 
@@ -228,7 +229,7 @@ void ssc_i2s_set_receiver(Ssc *p_ssc, uint32_t ul_mode,
 		rx_clk_option.ul_cks = ul_cks;
 		rx_clk_option.ul_cko = SSC_TCMR_CKO_NONE;
 		rx_clk_option.ul_cki = 0;
-		rx_clk_option.ul_ckg = SSC_RCMR_CKG_NONE;
+		rx_clk_option.ul_ckg = SSC_RCMR_CKG_CONTINUOUS;
 		rx_clk_option.ul_sttdly = 1;
 		rx_clk_option.ul_period = 0;
 

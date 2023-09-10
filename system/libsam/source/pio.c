@@ -75,7 +75,7 @@ extern void PIO_PullUp( Pio *pPio, const uint32_t dwMask, const uint32_t dwPullU
  */
 extern void PIO_SetDebounceFilter( Pio* pPio, const uint32_t dwMask, const uint32_t dwCuttOff )
 {
-#if (defined _SAM3S_) || (defined _SAM3S8_) || (defined _SAM3N_)
+#if (defined _SAM3S_) || (defined _SAM4S_) || (defined _SAM3S8_) || (defined _SAM3N_)
     pPio->PIO_IFSCER = dwMask ; /* set Debouncing, 0 bit field no effect */
 #elif (defined _SAM3XA_) || (defined _SAM3U_)
     pPio->PIO_DIFSR = dwMask ; /* set Debouncing, 0 bit field no effect */
@@ -243,7 +243,7 @@ extern void PIO_SetInput( Pio* pPio, uint32_t dwMask, uint32_t dwAttribute )
     }
 
     /* Enable de-glitch or de-bounce if necessary */
-#if (defined _SAM3S_) || (defined _SAM3S8_) || (defined _SAM3N_)
+#if (defined _SAM3S_) || (defined _SAM4S_) || (defined _SAM3S8_) || (defined _SAM3N_)
     if ( dwAttribute & PIO_DEGLITCH )
     {
         pPio->PIO_IFSCDR = dwMask ;
@@ -317,6 +317,17 @@ extern void PIO_SetOutput( Pio* pPio, uint32_t dwMask, uint32_t dwDefaultValue,
     pPio->PIO_OER = dwMask ;
     pPio->PIO_PER = dwMask ;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  *

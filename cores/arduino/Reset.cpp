@@ -23,6 +23,15 @@
 extern "C" {
 #endif
 
+#ifdef __SAM4S4A__
+
+#define EEFC_FCR_FCMD(value) ((EEFC_FCR_FCMD_Msk & ((value) << EEFC_FCR_FCMD_Pos)))
+#define EEFC_FCR_FKEY(value) ((EEFC_FCR_FKEY_Msk & ((value) << EEFC_FCR_FKEY_Pos)))
+#define RSTC_CR_KEY(value) ((RSTC_CR_KEY_Msk & ((value) << RSTC_CR_KEY_Pos)))
+
+#endif
+
+
 __attribute__ ((long_call, section (".ramfunc")))
 void banzai() {
 	// Disable all interrupts
@@ -31,6 +40,7 @@ void banzai() {
 	// Set bootflag to run SAM-BA bootloader at restart
 	const int EEFC_FCMD_CGPB = 0x0C;
 	const int EEFC_KEY = 0x5A;
+
 	while ((EFC0->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 	EFC0->EEFC_FCR =
 		EEFC_FCR_FCMD(EEFC_FCMD_CGPB) |
@@ -39,6 +49,11 @@ void banzai() {
 	while ((EFC0->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 
 	// From here flash memory is no more available.
+
+	// Memory swap needs some time to stabilize
+	for (uint32_t i=0; i<1000000; i++)
+		// force compiler to not optimize this
+		__asm__ __volatile__("");
 
 	// BANZAIIIIIII!!!
 	const int RSTC_KEY = 0xA5;
@@ -54,6 +69,7 @@ static int ticks = -1;
 
 void initiateReset(int _ticks) {
 	ticks = _ticks;
+	//banzai();
 }
 
 void cancelReset() {

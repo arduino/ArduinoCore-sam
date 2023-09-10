@@ -1,0 +1,37 @@
+
+variant.o:
+         U __libc_init_array
+00000000 t _GLOBAL__sub_I_g_APinDescription
+00000000 W _Z11serialEventv
+00000000 W _Z14serialEventRunv
+00000000 t _Z41__static_initialization_and_destruction_0ii
+00000000 r _ZL2A0
+00000000 r _ZL2SS
+00000000 r _ZL3SCK
+00000000 r _ZL4MISO
+00000000 r _ZL4MOSI
+         U _ZN10RingBufferC1Ev
+         U _ZN9UARTClass10IrqHandlerEv
+         U _ZN9UARTClass9availableEv
+         U _ZN9UARTClassC1EP4Uart4IRQnmP10RingBufferS4_
+         U adc_configure_timing
+         U adc_configure_trigger
+         U adc_disable_all_channel
+         U adc_disable_interrupt
+         U adc_init
+         U analogOutputInit
+         U digitalWrite
+00000000 R g_APinDescription
+00000000 B g_pinStatus
+00000000 T init
+00000000 t NVIC_SetPriority
+         U PIO_Configure
+         U pmc_enable_periph_clk
+00000000 B rx_buffer1
+00000000 B Serial
+         U SystemCoreClock
+         U SystemInit
+00000000 t SysTick_Config
+00000000 B tx_buffer1
+00000000 T UART1_Handler
+         U WDT_Disable

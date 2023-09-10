@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-unsigned long millis( void )
+uint32_t millis( void )
 {
 // todo: ensure no interrupts
     return GetTickCount() ;
@@ -32,7 +32,7 @@ unsigned long millis( void )
 // Theory: repeatedly take readings of SysTick counter, millis counter and SysTick interrupt pending flag.
 // When it appears that millis counter and pending is stable and SysTick hasn't rolled over, use these 
 // values to calculate micros. If there is a pending SysTick, add one to the millis counter in the calculation.
-unsigned long micros( void )
+uint32_t micros( void )
 {
     uint32_t ticks, ticks2;
     uint32_t pend, pend2;
@@ -72,7 +72,7 @@ unsigned long micros( void )
 // }
 
 
-void delay( unsigned long ms )
+void delay( uint32_t ms )
 {
     if (ms == 0)
         return;
