@@ -1,6 +1,6 @@
 {
   "name": "framework-arduino-sam",
-  "version": "1.6.12",
+  "version": "0.0.0",
   "description": "The official Arduino Wiring-based Framework for ATSAM3 microcontrollers",
   "keywords": [
     "framework",
