@@ -70,14 +70,6 @@ typedef struct {
   RwReg AFE_WPMR;      /**< \brief (Afec Offset: 0xE4) Write Protect Mode Register */
   RoReg AFE_WPSR;      /**< \brief (Afec Offset: 0xE8) Write Protect Status Register */
   RoReg Reserved5[5];
-  RwReg AFE_RPR;       /**< \brief (Afec Offset: 0x100) Receive Pointer Register */
-  RwReg AFE_RCR;       /**< \brief (Afec Offset: 0x104) Receive Counter Register */
-  RoReg Reserved6[2];
-  RwReg AFE_RNPR;      /**< \brief (Afec Offset: 0x110) Receive Next Pointer Register */
-  RwReg AFE_RNCR;      /**< \brief (Afec Offset: 0x114) Receive Next Counter Register */
-  RoReg Reserved7[2];
-  WoReg AFE_PTCR;      /**< \brief (Afec Offset: 0x120) Transfer Control Register */
-  RoReg AFE_PTSR;      /**< \brief (Afec Offset: 0x124) Transfer Status Register */
 } Afec;
 #endif /* !(defined(__ASSEMBLY__) || defined(__IAR_SYSTEMS_ASM__)) */
 /* -------- AFE_CR : (AFEC Offset: 0x00) Control Register -------- */
