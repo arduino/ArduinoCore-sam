@@ -56,7 +56,11 @@
 #include "include/rtc.h"
 #include "include/rtt.h"
 #include "include/spi.h"
+
+#if (SAM3_SERIES) || (SAM4S_SERIES)
 #include "include/ssc.h"
+#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
+
 #include "include/tc.h"
 #include "include/twi.h"
 #include "include/usart.h"

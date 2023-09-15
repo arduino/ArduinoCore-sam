@@ -35,7 +35,7 @@
 # define MAX_PERIPH_ID    44
 #elif (SAM3U_SERIES)
 # define MAX_PERIPH_ID    29
-#elif (SAM3S_SERIES || SAM4S_SERIES)
+#elif (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 # define MAX_PERIPH_ID    34
 #endif
 
@@ -177,7 +177,7 @@ uint32_t pmc_switch_mck_to_pllack(uint32_t ul_pres)
 	return 0;
 }
 
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 /**
  * \brief Switch master clock source selection to PLLB clock.
  *
@@ -435,7 +435,7 @@ uint32_t pmc_is_locked_pllack(void)
 	return (PMC->PMC_SR & PMC_SR_LOCKA);
 }
 
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 /**
  * \brief Enable PLLB clock.
  *
@@ -525,7 +525,7 @@ uint32_t pmc_enable_periph_clk(uint32_t ul_id)
 		if ((PMC->PMC_PCSR0 & (1u << ul_id)) != (1u << ul_id)) {
 			PMC->PMC_PCER0 = 1 << ul_id;
 		}
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	} else {
 		ul_id -= 32;
 		if ((PMC->PMC_PCSR1 & (1u << ul_id)) != (1u << ul_id)) {
@@ -557,7 +557,7 @@ uint32_t pmc_disable_periph_clk(uint32_t ul_id)
 		if ((PMC->PMC_PCSR0 & (1u << ul_id)) == (1u << ul_id)) {
 			PMC->PMC_PCDR0 = 1 << ul_id;
 		}
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	} else {
 		ul_id -= 32;
 		if ((PMC->PMC_PCSR1 & (1u << ul_id)) == (1u << ul_id)) {
@@ -576,7 +576,7 @@ void pmc_enable_all_periph_clk(void)
 	PMC->PMC_PCER0 = PMC_MASK_STATUS0;
 	while ((PMC->PMC_PCSR0 & PMC_MASK_STATUS0) != PMC_MASK_STATUS0);
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	PMC->PMC_PCER1 = PMC_MASK_STATUS1;
 	while ((PMC->PMC_PCSR1 & PMC_MASK_STATUS1) != PMC_MASK_STATUS1);
 #endif
@@ -590,7 +590,7 @@ void pmc_disable_all_periph_clk(void)
 	PMC->PMC_PCDR0 = PMC_MASK_STATUS0;
 	while ((PMC->PMC_PCSR0 & PMC_MASK_STATUS0) != 0);
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	PMC->PMC_PCDR1 = PMC_MASK_STATUS1;
 	while ((PMC->PMC_PCSR1 & PMC_MASK_STATUS1) != 0);
 #endif
@@ -612,7 +612,7 @@ uint32_t pmc_is_periph_clk_enabled(uint32_t ul_id)
 		return 0;
 	}
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	if (ul_id < 32) {
 #endif
 		if ((PMC->PMC_PCSR0 & (1u << ul_id))) {
@@ -620,7 +620,7 @@ uint32_t pmc_is_periph_clk_enabled(uint32_t ul_id)
 		} else {
 			return 0;
 		}
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	} else {
 		ul_id -= 32;
 		if ((PMC->PMC_PCSR1 & (1u << ul_id))) {
@@ -732,7 +732,7 @@ uint32_t pmc_switch_pck_to_pllack(uint32_t ul_id, uint32_t ul_pres)
 	return 0;
 }
 
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 /**
  * \brief Switch programmable clock source selection to PLLB clock.
  *
@@ -839,7 +839,7 @@ uint32_t pmc_is_pck_enabled(uint32_t ul_id)
 	return (PMC->PMC_SCSR & (PMC_SCSR_PCK0 << ul_id));
 }
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 /**
  * \brief Switch UDP (USB) clock source selection to PLLA clock.
  *
@@ -851,7 +851,7 @@ void pmc_switch_udpck_to_pllack(uint32_t ul_usbdiv)
 }
 #endif
 
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 /**
  * \brief Switch UDP (USB) clock source selection to PLLB clock.
  *
@@ -875,13 +875,13 @@ void pmc_switch_udpck_to_upllck(uint32_t ul_usbdiv)
 }
 #endif
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 /**
  * \brief Enable UDP (USB) clock.
  */
 void pmc_enable_udpck(void)
 {
-# if (SAM3S_SERIES || SAM4S_SERIES)
+# if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	PMC->PMC_SCER = PMC_SCER_UDP;
 # else
 	PMC->PMC_SCER = PMC_SCER_UOTGCLK;
@@ -893,7 +893,7 @@ void pmc_enable_udpck(void)
  */
 void pmc_disable_udpck(void)
 {
-# if (SAM3S_SERIES || SAM4S_SERIES)
+# if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	PMC->PMC_SCDR = PMC_SCDR_UDP;
 # else
 	PMC->PMC_SCDR = PMC_SCDR_UOTGCLK;

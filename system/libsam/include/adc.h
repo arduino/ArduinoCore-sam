@@ -50,7 +50,7 @@ extern "C" {
 #define ADC_STARTUP_FAST     12
 
 /* Definitions for ADC resolution */
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM4E_SERIES
 #define ADC_MR_LOWRES_BITS_12 (0x0u << 4) /**< \brief (ADC_MR) 12-bit resolution */
 #define ADC_MR_LOWRES_BITS_10 (0x0u << 5) /**< \brief (ADC_MR) 10-bit resolution */
 #define ADC_MR_LOWRES ADC_MR_LOWRES_BITS_12 /**< \brief (ADC_MR) Resolution */
@@ -84,7 +84,7 @@ enum adc_trigger_t {
 											ADC_MR_TRGEN,  /* TIO Output of the Timer Counter Channel 1 */
 	ADC_TRIG_TIO_CH_2 = (ADC_MR_TRGSEL_ADC_TRIG3  & ADC_MR_TRGSEL_Msk) |
 											ADC_MR_TRGEN,  /* TIO Output of the Timer Counter Channel 2 */
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES || SAM3U_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES || SAM3U_SERIES
 	ADC_TRIG_PWM_EVENT_LINE_0 = (ADC_MR_TRGSEL_ADC_TRIG4  & ADC_MR_TRGSEL_Msk) |
 															ADC_MR_TRGEN, /* PWM Event Line 0 */
 	ADC_TRIG_PWM_EVENT_LINE_1 = (ADC_MR_TRGSEL_ADC_TRIG5  & ADC_MR_TRGSEL_Msk) |
@@ -92,7 +92,7 @@ enum adc_trigger_t {
 #endif
 } ;
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /* Definitions for ADC channel number */
 enum adc_channel_num_t {
 	ADC_CHANNEL_0  = 0,
@@ -133,7 +133,7 @@ enum adc_gainvalue_t{
 	ADC_GAINVALUE_3 = 3
 };
 /* Definitions for ADC analog settling time */
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 enum adc_settling_time_t{
 	ADC_SETTLING_TIME_0 = ADC_MR_SETTLING_AST3,
 	ADC_SETTLING_TIME_1 = ADC_MR_SETTLING_AST5,
@@ -142,7 +142,7 @@ enum adc_settling_time_t{
 };
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 uint32_t adc_init(Adc *p_adc, const uint32_t ul_mck,
                             const uint32_t ul_adc_clock, const uint8_t uc_startup);
 void adc_configure_trigger(Adc *p_adc, const enum adc_trigger_t trigger,
@@ -188,7 +188,7 @@ uint32_t adc_get_status(const Adc *p_adc);
 uint32_t adc_get_interrupt_mask(const Adc *p_adc);
 Pdc *adc_get_pdc_base(const Adc *p_adc);
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 void adc_configure_timing(Adc *p_adc, const uint8_t uc_tracking,
                                          const enum adc_settling_time_t settling, const uint8_t uc_transfer);
 void adc_enable_anch( Adc *p_adc );
@@ -208,7 +208,7 @@ void adc_configure_timing(Adc *p_adc, const uint8_t uc_tracking);
 void adc_configure_timing(Adc *p_adc, const uint32_t ul_sh);
 #endif
 
-#if  SAM3SD8_SERIES || SAM4S_SERIES
+#if  SAM3SD8_SERIES || SAM4S_SERIES || SAM4E_SERIES
 void adc_set_calibmode(Adc *p_adc);
 #endif
 

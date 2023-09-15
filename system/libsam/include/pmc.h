@@ -89,7 +89,7 @@ void pmc_mck_set_source(uint32_t ul_source);
 uint32_t pmc_switch_mck_to_sclk(uint32_t ul_pres);
 uint32_t pmc_switch_mck_to_mainck(uint32_t ul_pres);
 uint32_t pmc_switch_mck_to_pllack(uint32_t ul_pres);
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 uint32_t pmc_switch_mck_to_pllbck(uint32_t ul_pres);
 #endif
 #if (SAM3XA_SERIES || SAM3U_SERIES)
@@ -134,7 +134,7 @@ void pmc_enable_pllack(uint32_t mula, uint32_t pllacount, uint32_t diva);
 void pmc_disable_pllack(void);
 uint32_t pmc_is_locked_pllack(void);
 
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_enable_pllbck(uint32_t mulb, uint32_t pllbcount, uint32_t divb);
 void pmc_disable_pllbck(void);
 uint32_t pmc_is_locked_pllbck(void);
@@ -175,7 +175,7 @@ void pmc_pck_set_source(uint32_t ul_id, uint32_t ul_source);
 uint32_t pmc_switch_pck_to_sclk(uint32_t ul_id, uint32_t ul_pres);
 uint32_t pmc_switch_pck_to_mainck(uint32_t ul_id, uint32_t ul_pres);
 uint32_t pmc_switch_pck_to_pllack(uint32_t ul_id, uint32_t ul_pres);
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 uint32_t pmc_switch_pck_to_pllbck(uint32_t ul_id, uint32_t ul_pres);
 #endif
 #if (SAM3XA_SERIES || SAM3U_SERIES)
@@ -195,16 +195,16 @@ uint32_t pmc_is_pck_enabled(uint32_t ul_id);
  */
 //@{
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_switch_udpck_to_pllack(uint32_t ul_usbdiv);
 #endif
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_switch_udpck_to_pllbck(uint32_t ul_usbdiv);
 #endif
 #if (SAM3XA_SERIES)
 void pmc_switch_udpck_to_upllck(uint32_t ul_usbdiv);
 #endif
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_enable_udpck(void);
 void pmc_disable_udpck(void);
 #endif

@@ -29,7 +29,7 @@
 
 #include "chip.h"
 
-#if SAM3S_SERIES || SAM4S_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES
 
 #include "USB_device.h"
 #include "udp.h"
@@ -37,4 +37,4 @@
 //#include <include/udp.h>
 
 
-#endif /* SAM3S_SERIES || SAM4S_SERIES */
+#endif /* SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES */
