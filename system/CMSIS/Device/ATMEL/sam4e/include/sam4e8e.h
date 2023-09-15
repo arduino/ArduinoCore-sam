@@ -495,9 +495,9 @@ void WDT_Handler        ( void );
 #define PDC_TWI0   ((Pdc    *)0x400A8100U) /**< \brief (PDC_TWI0  ) Base Address */
 #define TWI1       ((Twi    *)0x400AC000U) /**< \brief (TWI1      ) Base Address */
 #define PDC_TWI1   ((Pdc    *)0x400AC100U) /**< \brief (PDC_TWI1  ) Base Address */
-#define AFEC0      ((Afec   *)0x400B0000U) /**< \brief (AFEC0     ) Base Address */
+#define AFEC0      ((Adc   *)0x400B0000U) /**< \brief (AFEC0     ) Base Address */
 #define PDC_AFEC0  ((Pdc    *)0x400B0100U) /**< \brief (PDC_AFEC0 ) Base Address */
-#define AFEC1      ((Afec   *)0x400B4000U) /**< \brief (AFEC1     ) Base Address */
+#define AFEC1      ((Adc   *)0x400B4000U) /**< \brief (AFEC1     ) Base Address */
 #define PDC_AFEC1  ((Pdc    *)0x400B4100U) /**< \brief (PDC_AFEC1 ) Base Address */
 #define DACC       ((Dacc   *)0x400B8000U) /**< \brief (DACC      ) Base Address */
 #define PDC_DACC   ((Pdc    *)0x400B8100U) /**< \brief (PDC_DACC  ) Base Address */
