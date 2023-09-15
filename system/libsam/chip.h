@@ -41,7 +41,7 @@
 /*
  * Peripherals
  */
-//#include "include/adc.h"
+#include "include/adc.h"
 //#if (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)|| (SAM4S_SERIES) && !(__SAM3S4A__)&& !(__SAM4S4A__)
 //#include "include/dacc.h"
 //#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
