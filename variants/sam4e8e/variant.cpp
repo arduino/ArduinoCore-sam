@@ -21,14 +21,14 @@
 /*
  * Pin             |  PORT  | Label
  * ----------------+--------+-------
- *   0       	   |  PB2  	| "Serial RX"
- *   1       	   |  PB3  	| "Serial TX"
+ *   0       	     |  PB2  	| "Serial RX"
+ *   1       	     |  PB3  	| "Serial TX"
  *   2       AD5   |  PB1 	| "A0 : Vbatt sense"
- *   3       	   |  PA0  	| "Pixel DTA"
- *   4       	   |  PA1   | "Pixel CLK"
- *   5       	   |  PA9   | "User Button"
- *   6       	   |  PA20  | "USB-Sense"
- *   7       	   |  PA10  | "Acc INT 1"
+ *   3       	     |  PA0  	| "Pixel DTA"
+ *   4       	     |  PA1   | "Pixel CLK"
+ *   5         	   |  PA9   | "User Button"
+ *   6        	   |  PA20  | "USB-Sense"
+ *   7        	   |  PA10  | "Acc INT 1"
  *   8             |  PA8	| "Acc INT 2"
  *   9             |  PA7	| "Gyr INT 1"
  *  10             |  PA7   | "Gyr INT 2"
@@ -38,7 +38,7 @@
  *  14       MISO  |  PA12	| "MISO"
  *  15       SCK   |  PA14  | "SCK"
  *  16       NPCS0 |  PA11  | "CS"
- *  17       	   |  PA15  | "SPI INT"
+ *  17        	   |  PA15  | "SPI INT"
  */
 
 #ifdef __cplusplus
@@ -58,10 +58,10 @@ extern const PinDescription g_APinDescription[]=
 {
   // ----------------------
 	// 0/1 - UART (Serial) == UART1
-	{ PIOB, PIO_PB2A_URXD1,  ID_PIOB, PIO_PERIPH_B	, PIO_DEFAULT,  PIN_ATTR_DIGITAL,NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER }, // URXD 
-	{ PIOB, PIO_PB3A_UTXD1,  ID_PIOB, PIO_PERIPH_B	, PIO_DEFAULT,  PIN_ATTR_DIGITAL,NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER }, // UTXD 
+	{ PIOB, PIO_PA5C_URXD1,  ID_PIOB, PIO_PERIPH_B	, PIO_DEFAULT,  PIN_ATTR_DIGITAL,NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER }, // URXD 
+	{ PIOB, PIO_PA6C_UTXD1,  ID_PIOB, PIO_PERIPH_B	, PIO_DEFAULT,  PIN_ATTR_DIGITAL,NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER }, // UTXD 
 	// 2 - ADC -BATT SENSE
-	{ PIOB, PIO_PB1X1_AD5,    ID_PIOB, PIO_INPUT	, PIO_DEFAULT, PIN_ATTR_ANALOG,  ADC0,   ADC5,   NOT_ON_PWM,  NOT_ON_TIMER }, // AD0 
+	{ PIOB, PIO_PB1X1_AFE0_AD5,    ID_PIOB, PIO_INPUT	, PIO_DEFAULT, PIN_ATTR_ANALOG,  ADC0,   ADC5,   NOT_ON_PWM,  NOT_ON_TIMER }, // AD0 is it?
 	// 3,4 - pixel data   ( 3 = OUT/DATA, 4 = clk )
 	{ PIOA, PIO_PA0		 ,  ID_PIOA, PIO_OUTPUT_0		, PIO_DEFAULT , PIN_ATTR_DIGITAL, NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER     }, // DO DEFAULT LOW /
 	{ PIOA, PIO_PA1		 ,  ID_PIOA, PIO_OUTPUT_0		, PIO_DEFAULT , PIN_ATTR_DIGITAL, NO_ADC, NO_ADC, NOT_ON_PWM,  NOT_ON_TIMER     }, // DI  
@@ -89,7 +89,7 @@ extern const PinDescription g_APinDescription[]=
   // 18 - TWI0 all pins
   { PIOA, PIO_PA3A_TWD0|PIO_PA4A_TWCK0, ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT, (PIN_ATTR_DIGITAL|PIN_ATTR_COMBO), NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER }, // DONE
    // 19 - UART1 (Serial) all pins
-  { PIOB, PIO_PB3A_UTXD1|PIO_PB2A_URXD1, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT, (PIN_ATTR_DIGITAL|PIN_ATTR_COMBO), NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER }, // DONE
+  { PIOB, PIO_PA6C_UTXD1|PIO_PA5C_URXD1, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT, (PIN_ATTR_DIGITAL|PIN_ATTR_COMBO), NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER }, // DONE
  // END
   { NULL, 0, 0, PIO_NOT_A_PIN, PIO_DEFAULT, 0, NO_ADC, NO_ADC, NOT_ON_PWM, NOT_ON_TIMER }
 } ;
@@ -170,12 +170,12 @@ void init( void )
   digitalWrite(0, HIGH); // Enable pullup for RX0
 
   // Initialize Analog Controller
-  pmc_enable_periph_clk(ID_ADC);
-  adc_init(ADC, SystemCoreClock, ADC_FREQ_MAX, ADC_STARTUP_FAST);
-  adc_configure_timing(ADC, 0, ADC_SETTLING_TIME_3, 1);
-  adc_configure_trigger(ADC, ADC_TRIG_SW, 0); // Disable hardware trigger.
-  adc_disable_interrupt(ADC, 0xFFFFFFFF); // Disable all ADC interrupts.
-  adc_disable_all_channel(ADC);
+  pmc_enable_periph_clk(ID_AFEC0);
+  adc_init(AFEC0, SystemCoreClock, ADC_FREQ_MAX, ADC_STARTUP_FAST);
+  adc_configure_timing(AFEC0, 0, ADC_SETTLING_TIME_3, 1);
+  adc_configure_trigger(AFEC0, ADC_TRIG_SW, 0); // Disable hardware trigger.
+  adc_disable_interrupt(AFEC0, 0xFFFFFFFF); // Disable all ADC interrupts.
+  adc_disable_all_channel(AFEC0);
 
   // Initialize analogOutput module
    analogOutputInit();
