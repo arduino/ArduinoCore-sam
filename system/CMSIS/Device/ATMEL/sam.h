@@ -164,8 +164,21 @@
 /* Entire SAM4S series */
 #define SAM4S_SERIES ( SAM4S8 || SAM4S16 || SAM4S4)
 
+/* SAM4E series */	
+#define SAM4E8 ( \
+    part_is_defined( SAM4E8C ) || \
+    part_is_defined( SAM4E8E ) )
+
+#define SAM4E16 ( \
+    part_is_defined( SAM4E16C ) || \
+    part_is_defined( SAM4E16E ) )
+
+/* Entire SAM4S series */
+#define SAM4E_SERIES ( SAM4E8 || SAM4E16 )
+
+
 /* Entire SAM4 Family */
-#define SAM4_SERIES ( SAM4S_SERIES )
+#define SAM4_SERIES ( SAM4S_SERIES || SAM4E_SERIES)
 
 /*
  * ----------------------------------------------------------------------------
