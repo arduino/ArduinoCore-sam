@@ -40,7 +40,7 @@ void banzai() {
 	// Set bootflag to run SAM-BA bootloader at restart
 	const int EEFC_FCMD_CGPB = 0x0C;  // Clear GPNVM bit
 	const int EEFC_KEY = 0x5A;		//  FKEY: Flash Writing Protection Key
-#ifdef SAM4S_SERIES
+#if SAM4S_SERIES
 
 	while ((EFC0->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 	EFC0->EEFC_FCR =
@@ -50,7 +50,7 @@ void banzai() {
 	while ((EFC0->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 
 #elif SAM4E_SERIES
-
+	#warning SAM4E_SERIES Enabled 
 	while ((EFC->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 	EFC->EEFC_FCR =
 		EEFC_FCR_FCMD(EEFC_FCMD_CGPB) |

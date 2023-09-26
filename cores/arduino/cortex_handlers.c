@@ -64,9 +64,9 @@ void PMC_Handler        ( void ) __attribute__ ((weak, alias("__halt")));
 void EFC_Handler        ( void ) __attribute__ ((weak, alias("__halt")));
 void UART0_Handler      ( void ) __attribute__ ((weak, alias("__halt")));
 void UART1_Handler      ( void ) __attribute__ ((weak, alias("__halt")));
-#ifdef (_SAM4S_SMC_INSTANCE_) || (_SAM4E_SMC_INSTANCE_)
+#if (defined(_SAM4S_SMC_INSTANCE_) || defined(_SAM4E_SMC_INSTANCE_))
 void SMC_Handler        ( void ) __attribute__ ((weak, alias("__halt")));
-#endif /* _SAM4S_SMC_INSTANCE_ */
+#endif /* _SAM4S_SMC_INSTANCE_ _SAM4E_SMC_INSTANCE_*/
 void PIOA_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
 void PIOB_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
 
