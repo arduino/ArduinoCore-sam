@@ -479,7 +479,8 @@ void WDT_Handler        ( void );
 #define PDC_UART1  ((Pdc    *)0x40060700U) /**< \brief (PDC_UART1 ) Base Address */
 #define HSMCI      ((Hsmci  *)0x40080000U) /**< \brief (HSMCI     ) Base Address */
 #define PDC_HSMCI  ((Pdc    *)0x40080100U) /**< \brief (PDC_HSMCI ) Base Address */
-#define UDP        ((Udp    *)0x40084000U) /**< \brief (UDP       ) Base Address */
+// name conflict with Arduino UDP (networking) library, changed to UDP0 
+#define UDP0        ((Udp    *)0x40084000U) /**< \brief (UDP       ) Base Address */
 #define SPI        ((Spi    *)0x40088000U) /**< \brief (SPI       ) Base Address */
 #define PDC_SPI    ((Pdc    *)0x40088100U) /**< \brief (PDC_SPI   ) Base Address */
 #define TC0        ((Tc     *)0x40090000U) /**< \brief (TC0       ) Base Address */
