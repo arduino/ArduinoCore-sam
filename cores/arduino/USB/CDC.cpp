@@ -185,7 +185,7 @@ void Serial_::accept(void)
 		}
 	} while (__STREXW(1, &guard) != 0); // retry until write succeed
 	ring_buffer *buffer = &cdc_rx_buffer;
-	#ifdef __SAM4S4A__
+	#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//SAM3S receives OUT token data in fifo and holds it there until ACK'd. RXBYTECNT indicates
 	//The number of bytes available in the fifo. When data is popped from the fifo, the hardware
 	//leaves RXBYTECNT unaltered (it does not decrement). Therefore, all bytes must be read from
@@ -195,6 +195,7 @@ void Serial_::accept(void)
 	//the RX interrupt will keep retriggering until there is room in the ring buffer to accept the data.
 	//Because of this, we have to disable CDC_RX interrupt to allow user code to read the data (see Serial_:read()).
 	//Short version: Must read entire fifo on the SAM3S or nothing at all. 
+	// ref: 40.6.2 Handling Transactions with USB 2.0 Device Peripheral, SAM4S datasheet
 	uint32_t len;
 	uint32_t bytes_free = CDC_SERIAL_BUFFER_SIZE - this->available(); // bytes free in ring buffer
 	uint32_t fifo_count = USBD_Available(CDC_RX); //bytes available to be read in SAM3S fifo
@@ -255,7 +256,7 @@ int Serial_::peek(void)
 	}
 }
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 //extended Serial class in USBAPI.h to provide this bulk read method.
 //User code must supply a pointer to receive the data. The number of
 //bytes actually read is returned. The idea is to quere SerialUSB.available()
@@ -342,7 +343,7 @@ int Serial_::read(void)
 	{
 		unsigned char c = buffer->buffer[buffer->tail];
 		buffer->tail = (unsigned int)(buffer->tail + 1) % CDC_SERIAL_BUFFER_SIZE;
-		#ifdef __SAM4S4A__
+		#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 		//The first call of accept() is triggered by the CDC_RX interrupt. The interrupt is desabled 
 		//and the data is read into the ring buffer. This allows user code to call Serial_::read() to 
 		//drain the ring buffer. Otherwise, the interrupts would continue to pre-empt user code, 
@@ -441,7 +442,7 @@ Serial_::operator bool()
 
 Serial_ SerialUSB;
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 //Allow USBCore.cpp to fetch the configuration descriptor
 const CDCDescriptor* CDC_GetDescriptor(void){
 	return &_cdcInterface;

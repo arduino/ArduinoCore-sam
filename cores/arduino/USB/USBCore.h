@@ -146,6 +146,8 @@ typedef struct {
 	uint8_t	bNumConfigurations;
 } DeviceDescriptor;
 
+#warning USBCore.h included 
+
 //	Config
 typedef struct {
 	uint8_t	len;			// 9
@@ -311,7 +313,7 @@ _Pragma("pack()")
 
 #endif
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 /** Atmel helper functions from compiler.h used in udp_device.h*/
 typedef uint32_t                U32;  //!< 32-bit unsigned integer.
 #if (defined __GNUC__) || (defined __CC_ARM)

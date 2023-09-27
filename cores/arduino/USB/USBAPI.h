@@ -23,7 +23,7 @@
 
 #include "RingBuffer.h"
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 //increase to improve CDC_RX performance for large data transfers
 #define CDC_SERIAL_BUFFER_SIZE	256 
 #endif//SAM4S4A
@@ -61,7 +61,7 @@ public:
 	virtual void accept(void);
 	virtual int peek(void);
 	virtual int read(void);
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//add bulk read capability. Returns number of bytes read.
 	virtual int read(uint8_t* data, uint32_t len);
 #endif
@@ -202,7 +202,7 @@ bool	MSC_Data(uint8_t rx,uint8_t tx);
 
 int		CDC_GetInterface(uint8_t* interfaceNum);
 int		CDC_GetOtherInterface(uint8_t* interfaceNum);
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 //define a reasonable getter for the descriptor so USBCore.cpp can fetch it
 const CDCDescriptor* CDC_GetDescriptor(void);
 #else

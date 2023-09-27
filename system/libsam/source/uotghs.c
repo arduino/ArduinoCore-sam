@@ -28,7 +28,7 @@
  */
 
 #include "chip.h"
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 void (*gpf_isr)(void) = (0UL);
 
 void UDP_Handler( void )

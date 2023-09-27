@@ -19,11 +19,12 @@
 #include "Reset.h"
 #include <stdio.h>
 
+#warning USBCore.cpp included 
 
 //#define TRACE_CORE(x)	x
 #define TRACE_CORE(x)
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 /* functions used by USBCore.cpp, implemented in variant.cpp*/
 static volatile uint32_t doug;
 static volatile uint32_t ul_send_fifo_ptr[MAX_ENDPOINTS];
@@ -100,7 +101,7 @@ const uint16_t STRING_LANGUAGE[2] = {
 };
 
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 //Use Arduino Due instead of product from boards.txt
 #undef USB_PRODUCT
 #endif
@@ -136,11 +137,13 @@ const uint8_t STRING_MANUFACTURER[12] = USB_MANUFACTURER;
 
 //	DEVICE DESCRIPTOR
 #ifdef CDC_ENABLED 
-#ifdef __SAM4S4A__ //SAM3S modification
+#warning defined CDC Ena 
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__)) //SAM3S modification
 //Since IAD is present, the device should be class EF.
 //see here https://msdn.microsoft.com/en-us/library/windows/hardware/ff540054(v=vs.85).aspx
 const DeviceDescriptor USB_DeviceDescriptor =
 	D_DEVICE(0xEF,0x02,0x01,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
+#warning SAM4S DevDesc
 #else 
 const DeviceDescriptor USB_DeviceDescriptor =
 	D_DEVICE(0x00,0x00,0x00,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
@@ -225,7 +228,7 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
 	
 	while (n--)
 		*dst++ = UDD_Recv8(ep & 0xF);
-	#ifdef __SAM4S4A__
+	#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//SAM3S fifo byte count (RXBYTECNT) is not decremented by the hardware when fifo is read.
 	//You should always check RXBYTECNT and pass it in as len to this function, or RXBYTECNT
 	//will not be decremented, and the read will not be ack'd. You will have trouble otherwise 
@@ -276,7 +279,7 @@ uint32_t USBD_Send(uint32_t ep, const void* d, uint32_t len)
 	int r = len;
 	const uint8_t* data = (const uint8_t*)d;
 	
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//SAM3S employs this handy routine to send to EP0 during setup.
     if ((!_usbConfiguration) && (ep!=EP0))
     {
@@ -293,7 +296,7 @@ uint32_t USBD_Send(uint32_t ep, const void* d, uint32_t len)
 
 	while (len)
 	{
-		#ifdef __SAM4S4A__
+		#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 		//All endpoints (except ISO) are 64 on SAM3S and we are not using ISO here.
 		n=64;
 		#else
@@ -442,7 +445,7 @@ int USBD_SendOtherInterfaces(void)
 //	TODO
 static bool USBD_SendConfiguration(int maxlen)
 {
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//Since configuration is greater than 64 bytes, and UDD_Send is no longer queuing, 
 	//SAM3S uses completely different (and much simpler) means of getting the descriptor.
 	//I did have to make an assumption about the upper limit on descriptor size though.
@@ -557,7 +560,7 @@ static bool USBD_SendDescriptor(Setup& setup)
 	}
 	else if (USB_DEVICE_QUALIFIER == t)
 	{
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 		//Is this a request to see if we can run at high speed? YES. 
 		//SAM3S is full speed only and must STALL this.
 		UDD_Stall();
@@ -599,7 +602,7 @@ static bool USBD_SendDescriptor(Setup& setup)
 
 static void USB_SendZlp( void )
 {
-	#ifdef __SAM4S4A__
+	#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//Send zero length packet.
 	//while(Is_udd_transmit_ready(EP0)){
 	if(Is_udd_transmit_ready(EP0)) {
@@ -742,7 +745,7 @@ static void USB_ISR(void)
 {
 
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 	//saw these in testing, and will retrigger if not ack'd
 	if (Is_udd_suspend()){
 		udd_ack_suspend();
@@ -817,7 +820,7 @@ static void USB_ISR(void)
 	{
 		if (!UDD_ReceivedSetupInt())
 		{
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 			//EP0 is not dual bank, always uses bank0
 			if(Is_udd_bank0_received(EP0) && udd_byte_count(EP0)==0){
 				//Host sent ZLP in Status Stage to ACK receipt of IN data. This ACKs ZLP.
@@ -850,7 +853,7 @@ static void USB_ISR(void)
 		else
 		{
 			TRACE_CORE(puts(">>> EP0 Int: OUT Request\r\n");)
-			#ifdef __SAM4S4A__
+			#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 			//The only time we want to run UDD_ClearIN before processing OUT tokens is in the SET_ADDRESS case.
 			//So we call UDD_ClearIN within UDD_SetAddress instead of here.
 			#else
@@ -1014,7 +1017,7 @@ static void USB_ISR(void)
 		if (ok)
 		{
 			TRACE_CORE(puts(">>> EP0 Int: Send packet\r\n");)
-			#ifdef __SAM4S4A__	
+			#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))	
 			//ACK status stage after processing OUT tokens unless SET_ADDRESS
 			if (!(requestType & REQUEST_DEVICETOHOST) && !(setup.bRequest==SET_ADDRESS)) 
 			{
@@ -1103,7 +1106,7 @@ void USBDevice_::poll()
 {
 }
 
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
 //This is a rewrite of all the functions in uotghs_device.c. Everything had to move from
 //uotghs to udp because the SAM3S has a full speed USB transceiver. Might be best to get 
 //these out of here and into their own file? Or into variable.cpp if possible.

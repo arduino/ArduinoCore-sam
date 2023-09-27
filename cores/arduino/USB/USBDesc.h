@@ -18,8 +18,11 @@
 #define __USBDESC_H__
 
 #define CDC_ENABLED
-#ifndef __SAM4S4A__
+
+#if (!defined(__SAM4S4A__)  && !defined(__SAM4E8E__))
 #define HID_ENABLED
+// #else 
+// #warning SAM4S4A / 4E8E not defined
 #endif
 
 #ifdef CDC_ENABLED
@@ -40,7 +43,7 @@
 
 #define CDC_ACM_INTERFACE	0	// CDC ACM
 #define CDC_DATA_INTERFACE	1	// CDC Data
-#ifdef __SAM4S4A__
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
  #define CDC_FIRST_ENDPOINT	3 
 #else
  #define CDC_FIRST_ENDPOINT	1
