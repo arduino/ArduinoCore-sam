@@ -72,6 +72,14 @@ typedef struct {
   RwReg ADC_WPMR;      /**< \brief (Afec Offset: 0xE4) Write Protect Mode Register */
   RoReg ADC_WPSR;      /**< \brief (Afec Offset: 0xE8) Write Protect Status Register */
   RoReg Reserved5[5];
+  RwReg ADC_RPR;       /**< \brief (Adc Offset: 0x100) Receive Pointer Register Peripheral DMA Controller (PDC) */
+  RwReg ADC_RCR;       /**< \brief (Adc Offset: 0x104) Receive Counter Register Peripheral DMA Controller (PDC) */
+  RoReg Reserved6[2];
+  RwReg ADC_RNPR;      /**< \brief (Adc Offset: 0x110) Receive Next Pointer Register Peripheral DMA Controller (PDC) */
+  RwReg ADC_RNCR;      /**< \brief (Adc Offset: 0x114) Receive Next Counter Register Peripheral DMA Controller (PDC) */
+  RoReg Reserved7[2];
+  WoReg ADC_PTCR;      /**< \brief (Adc Offset: 0x120) Transfer Control Register Peripheral DMA Controller (PDC) */
+  RoReg ADC_PTSR;      /**< \brief (Adc Offset: 0x124) Transfer Status Register Peripheral DMA Controller (PDC) */  
 } Adc;
 #endif /* !(defined(__ASSEMBLY__) || defined(__IAR_SYSTEMS_ASM__)) */
 /* -------- ADC_CR : (AFEC Offset: 0x00) Control Register -------- */
