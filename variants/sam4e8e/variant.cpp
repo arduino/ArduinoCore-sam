@@ -171,11 +171,11 @@ void init( void )
 
   // Initialize Analog Controller
   pmc_enable_periph_clk(ID_AFEC0);
-  adc_init(AFEC0, SystemCoreClock, ADC_FREQ_MAX, ADC_STARTUP_FAST);
-  adc_configure_timing(AFEC0, 0, ADC_SETTLING_TIME_3, 1);
-  adc_configure_trigger(AFEC0, ADC_TRIG_SW, 0); // Disable hardware trigger.
-  adc_disable_interrupt(AFEC0, 0xFFFFFFFF); // Disable all ADC interrupts.
-  adc_disable_all_channel(AFEC0);
+  adc_init(ADC, SystemCoreClock, ADC_FREQ_MAX, ADC_STARTUP_FAST);
+  adc_configure_timing(ADC, 0, ADC_SETTLING_TIME_3, 1);
+  adc_configure_trigger(ADC, ADC_TRIG_SW, 0); // Disable hardware trigger.
+  adc_disable_interrupt(ADC, 0xFFFFFFFF); // Disable all ADC interrupts.
+  adc_disable_all_channel(ADC);
 
   // Initialize analogOutput module
    analogOutputInit();
