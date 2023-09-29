@@ -244,7 +244,7 @@ void analogOutputInit(void) {
 // hardware support.  These are defined in the appropriate
 // pins_*.c file.  For the rest of the pins, we default
 // to digital output.
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 	uint32_t attr = g_APinDescription[ulPin].ulPinAttribute;
 

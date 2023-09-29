@@ -19,7 +19,7 @@
 #include "Reset.h"
 #include <stdio.h>
 
-#warning USBCore.cpp included 
+// #warning USBCore.cpp included 
 
 //#define TRACE_CORE(x)	x
 #define TRACE_CORE(x)
@@ -137,13 +137,13 @@ const uint8_t STRING_MANUFACTURER[12] = USB_MANUFACTURER;
 
 //	DEVICE DESCRIPTOR
 #ifdef CDC_ENABLED 
-#warning defined CDC Ena 
+// #warning defined CDC Ena 
 #if (defined(__SAM4S4A__) || defined(__SAM4E8E__)) //SAM3S modification
 //Since IAD is present, the device should be class EF.
 //see here https://msdn.microsoft.com/en-us/library/windows/hardware/ff540054(v=vs.85).aspx
 const DeviceDescriptor USB_DeviceDescriptor =
 	D_DEVICE(0xEF,0x02,0x01,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
-#warning SAM4S DevDesc
+// #warning SAM4S DevDesc
 #else 
 const DeviceDescriptor USB_DeviceDescriptor =
 	D_DEVICE(0x00,0x00,0x00,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,0,1);
@@ -200,7 +200,7 @@ public:
 //	Number of bytes, assumes a rx endpoint
 uint32_t USBD_Available(uint32_t ep)
 {
-	#ifndef __SAM4S4A__
+	#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 	//SAM4S4A Handle diable/enable CDC_RX interrupts elsewhere as necessary 
 	LockEP lock(ep);
 	#endif
@@ -215,7 +215,7 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
 		return -1;
 		
 	
-	#ifndef __SAM4S4A__
+	#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 	//SAM4S4A Handle diable/enable CDC_RX interrupts elsewhere as necessary 
 	LockEP lock(ep);
 	#endif
@@ -628,7 +628,7 @@ static void USB_SendZlp( void )
 	#endif //__SAM4S4A__
 }
 
-#ifndef __SAM4S4A__ //High speed not avail on SAM3S
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__)) //High speed not avail on SAM3S
 static void Test_Mode_Support( uint8_t wIndex )
 {
     uint8_t i;
@@ -780,7 +780,7 @@ static void USB_ISR(void)
 
 		// Configure EP 0
         UDD_InitEP(0, EP_TYPE_CONTROL);
-		#ifndef __SAM4S4A__
+		#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 		//not available or necessary on SAM3S
 		udd_enable_setup_received_interrupt(0);
 		#endif
@@ -794,7 +794,7 @@ static void USB_ISR(void)
 #ifdef CDC_ENABLED
   	if (Is_udd_endpoint_interrupt(CDC_RX))
 	{
-		#ifndef __SAM4S4A__
+		#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 		udd_ack_out_received(CDC_RX);
 		// Handle received bytes
 		if (USBD_Available(CDC_RX))
@@ -832,7 +832,7 @@ static void USB_ISR(void)
 		Setup setup;
 		UDD_Recv(EP0, (uint8_t*)&setup, 8);
 
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 		UDD_ClearSetupInt();
 		uint8_t requestType = setup.bmRequestType;
 #else
@@ -927,7 +927,7 @@ static void USB_ISR(void)
                     //USBD_Halt(USBGenericRequest_GetEndpointNumber(pRequest));
 	    			UDD_Send8(EP0, 0);
                 }
-				#ifndef __SAM4S4A__
+				#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 				//TODO SAM3S should STALL this instead of ignore
                 if( setup.wValueL == 2) // TEST_MODE
                 {
@@ -979,7 +979,7 @@ static void USB_ISR(void)
 #ifdef CDC_ENABLED
 					
 					// Enable interrupt for CDC reception from host (OUT packet)
-					#ifndef __SAM4S4A__
+					#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 					//not available or necessary for the SAM3S
 					udd_enable_out_received_interrupt(CDC_RX);
 					#else

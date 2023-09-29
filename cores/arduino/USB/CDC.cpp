@@ -20,7 +20,7 @@
 
 #ifdef CDC_ENABLED
 
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 #define CDC_SERIAL_BUFFER_SIZE	512
 #else
 //Moved to USBAPI.h so user sketch can see it.
@@ -74,7 +74,7 @@ static const CDCDescriptor _cdcInterface =
 
 	//	CDC data interface
 	D_INTERFACE(CDC_DATA_INTERFACE,2,CDC_DATA_INTERFACE_CLASS,0,0),
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 	D_ENDPOINT(USB_ENDPOINT_OUT(CDC_ENDPOINT_OUT),USB_ENDPOINT_TYPE_BULK,512,0),
 	D_ENDPOINT(USB_ENDPOINT_IN (CDC_ENDPOINT_IN ),USB_ENDPOINT_TYPE_BULK,512,0)
 #else

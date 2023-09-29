@@ -71,12 +71,12 @@
 #if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 #include "include/USB_device.h"
 #include "include/USB_host.h"
-#warning USB_host and USB_device including
+// #warning USB_host and USB_device including
 #endif
 
 #if (defined(__SAM4S4A__) || defined(__SAM4E8E__)) 
 #include "include/udp_device.h"
-#warning udp_device including
+// #warning udp_device including
 #endif
 
 #if (SAM3XA_SERIES)

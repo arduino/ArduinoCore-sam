@@ -146,7 +146,7 @@ typedef struct {
 	uint8_t	bNumConfigurations;
 } DeviceDescriptor;
 
-#warning USBCore.h included 
+// #warning USBCore.h included 
 
 //	Config
 typedef struct {

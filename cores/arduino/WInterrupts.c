@@ -22,7 +22,7 @@ typedef void (*interruptCB)(void);
 
 static interruptCB callbacksPioA[32];
 static interruptCB callbacksPioB[32];
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 static interruptCB callbacksPioC[32];
 static interruptCB callbacksPioD[32];
 #endif
@@ -33,7 +33,7 @@ static void __initialize() {
 	for (i=0; i<32; i++) {
 		callbacksPioA[i] = NULL;
 		callbacksPioB[i] = NULL;
-		#ifndef __SAM4S4A__
+		#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 		callbacksPioC[i] = NULL;
 		callbacksPioD[i] = NULL;
 		#endif
@@ -51,7 +51,7 @@ static void __initialize() {
 	NVIC_SetPriority(PIOB_IRQn, 0);
 	NVIC_EnableIRQ(PIOB_IRQn);
 
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 	pmc_enable_periph_clk(ID_PIOC);
 	NVIC_DisableIRQ(PIOC_IRQn);
 	NVIC_ClearPendingIRQ(PIOC_IRQn);
@@ -89,7 +89,7 @@ void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode)
 		callbacksPioA[pos] = callback;
 	if (pio == PIOB)
 		callbacksPioB[pos] = callback;
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 	if (pio == PIOC)
 		callbacksPioC[pos] = callback;
 	if (pio == PIOD)
@@ -163,7 +163,7 @@ void PIOB_Handler(void) {
 	}
 }
 
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 void PIOC_Handler(void) {
 	uint32_t isr = PIOC->PIO_ISR;
 	uint32_t i;

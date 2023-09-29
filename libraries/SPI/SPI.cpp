@@ -89,7 +89,7 @@ void SPIClass::usingInterrupt(uint8_t interruptNumber)
 			} else if (pio == PIOB) {
 				interruptMode |= 2;
 				interruptMask[1] |= mask;
-#ifndef __SAM4S4A__
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 			} else if (pio == PIOC) {
 				interruptMode |= 4;
 				interruptMask[2] |= mask;
@@ -112,7 +112,7 @@ void SPIClass::beginTransaction(uint8_t pin, SPISettings settings)
 		if (mode < 16) {
 			if (mode & 1) PIOA->PIO_IDR = interruptMask[0];
 			if (mode & 2) PIOB->PIO_IDR = interruptMask[1];
-		#ifndef __SAM4S4A__
+		#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 			if (mode & 4) PIOC->PIO_IDR = interruptMask[2];
 			if (mode & 8) PIOD->PIO_IDR = interruptMask[3];
 		#endif
@@ -136,7 +136,7 @@ void SPIClass::endTransaction(void)
 		if (mode < 16) {
 			if (mode & 1) PIOA->PIO_IER = interruptMask[0];
 			if (mode & 2) PIOB->PIO_IER = interruptMask[1];
-		#ifndef __SAM4S4A__
+		#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 			if (mode & 4) PIOC->PIO_IER = interruptMask[2];
 			if (mode & 8) PIOD->PIO_IER = interruptMask[3];
 		#endif
