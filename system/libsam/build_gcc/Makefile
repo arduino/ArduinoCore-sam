@@ -25,7 +25,15 @@ SUBMAKE_OPTIONS=--no-builtin-rules --no-builtin-variables --no-print-directory
 #-------------------------------------------------------------------------------
 
 # libsam_sam3s4c_gcc_rel.a libsam_sam3u4e_gcc_rel.a libsam_sam3x8e_gcc_rel.a libsam_sam3x8h_gcc_rel.a
-all: libsam_sam4s4a_gcc_rel.a libsam_sam4s4a_gcc_dbg.a motionbow
+all: libsam_sam4s4a_gcc_rel.a libsam_sam4s4a_gcc_dbg.a motionbow libsam_sam4e8e_gcc_rel.a
+
+.PHONY: libsam_sam4e8e_gcc_rel.a
+libsam_sam4e8e_gcc_rel.a:
+	@echo ------------------------------------------------------------------------------------
+	@echo --- Making $@
+	@echo ---
+	@$(MAKE) CHIP=__SAM4E8E__ $(SUBMAKE_OPTIONS) OUTPUT_BIN=../../../variants/motionbow -f sam4.mk
+	@echo ------------------------------------------------------------------------------------
 
 .PHONY: motionbow
 motionbow:
@@ -36,16 +44,16 @@ motionbow:
 	@$(MAKE) CHIP=__SAM4S4A__  $(SUBMAKE_OPTIONS) OUTPUT_BIN=../../../variants/motionbow -f sam4.mk
 	@echo ------------------------------------------------------------------------------------
 
-.PHONY: libsam_sam4s4a_gcc_dbg
-libsam_sam4s4a_gcc_dbg:
+.PHONY: libsam_sam4s4a_gcc_dbg.a
+libsam_sam4s4a_gcc_dbg.a:
 	@echo ------------------------------------------------------------------------------------
 	@echo --- Making $@
 	@echo ---
 	@$(MAKE) CHIP=__SAM4S4A__ DEBUG=1 $(SUBMAKE_OPTIONS) OUTPUT_BIN=../../../variants/motionbow -f sam4.mk
 	@echo ------------------------------------------------------------------------------------
 
-.PHONY: libsam_sam4s4a_gcc_rel
-libsam_sam4s4a_gcc_rel:
+.PHONY: libsam_sam4s4a_gcc_rel.a
+libsam_sam4s4a_gcc_rel.a:
 	@echo ------------------------------------------------------------------------------------
 	@echo --- Making $@
 	@echo ---

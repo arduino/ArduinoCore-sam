@@ -54,7 +54,9 @@ CHIP_SERIE=sam4s
 else ifeq ($(CHIP), __SAM4S4C__)
 CHIP_NAME=sam4s4c
 CHIP_SERIE=sam4s
-else
+else ifeq ($(CHIP), __SAM4E8E__)
+CHIP_NAME=sam4e8e
+CHIP_SERIE=sam4e
 endif
 
 CMSIS_ARM_PATH=$(CMSIS_ROOT_PATH)/CMSIS/Include
