@@ -17,7 +17,7 @@
 #
 
 # Tool suffix when cross-compiling
-
+ARM_GCC_TOOLCHAIN = C:\Users\Axel\AppData\Local\Arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1\bin
 CROSS_COMPILE = $(ARM_GCC_TOOLCHAIN)/arm-none-eabi-
 
 # Compilation tools
