@@ -161,23 +161,23 @@ const DeviceVectors exception_table = {
 	(void*) PMC_Handler,     /* 5  Power Management Controller */
 	(void*) EFC_Handler,     /* 6  Enhanced Embedded Flash Controller */
 	(void*) UART0_Handler,  /* 7  UART 0 */
-	(void*) Dummy_Handler,
+	(void*) (0UL),
 	(void*) PIOA_Handler,   /* 9  Parallel I/O Controller A */
 	(void*) PIOB_Handler,   /* 10 Parallel I/O Controller B */
 #ifdef _SAM4E_PIOC_INSTANCE_
 	(void*) PIOC_Handler,   /* 11 Parallel I/O Controller C */
 #else
-	(void*) Dummy_Handler,
+	(void*) (0UL),
 #endif
 #ifdef _SAM4E_PIOD_INSTANCE_
 	(void*) PIOD_Handler,   /* 12 Parallel I/O Controller D */
 #else
-	(void*)Dummy_Handler,
+	(void*)(0UL),
 #endif
 #ifdef _SAM4E_PIOE_INSTANCE_
 	(void*) PIOE_Handler,   /* 13 Parallel I/O Controller E */
 #else
-	(void*) Dummy_Handler,
+	(void*) (0UL),
 #endif
 	(void*) USART0_Handler, /* 14 USART 0 */
 	(void*) USART1_Handler, /* 15 USART 1 */
@@ -185,7 +185,7 @@ const DeviceVectors exception_table = {
 	(void*) TWI0_Handler,   /* 17 Two Wire Interface 0 */
 	(void*) TWI1_Handler,   /* 18 Two Wire Interface 1 */
 	(void*) SPI_Handler,    /* 19 Serial Peripheral Interface */
-	(void*) Dummy_Handler,// (void*) DMAC_Handler,   /* 20 DMAC */
+	(void*) (0UL),// (void*) DMAC_Handler,   /* 20 DMAC */
 	(void*) TC0_Handler,    /* 21 Timer/Counter 0 */
 	(void*) TC1_Handler,    /* 22 Timer/Counter 1 */
 	(void*) TC2_Handler,    /* 23 Timer/Counter 2 */
@@ -194,41 +194,41 @@ const DeviceVectors exception_table = {
 	(void*) TC4_Handler,    /* 25 Timer/Counter 4 */
 	(void*) TC5_Handler,    /* 26 Timer/Counter 5 */
 #else
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
+	(void*) (0UL),
+	(void*) (0UL),
+	(void*) (0UL),
 #endif  /* _SAM4E_TC1_INSTANCE_ */
 #ifdef _SAM4E_TC2_INSTANCE_
-	(void*) Dummy_Handler,// (void*) TC6_Handler,    /* 27 Timer/Counter 6 */
-	(void*) Dummy_Handler,// void*) TC7_Handler,    /* 28 Timer/Counter 7 */
-	(void*) Dummy_Handler,// (void*) TC8_Handler,    /* 29 Timer/Counter 8 */
+	(void*) (0UL),// (void*) TC6_Handler,    /* 27 Timer/Counter 6 */
+	(void*) (0UL),// void*) TC7_Handler,    /* 28 Timer/Counter 7 */
+	(void*) (0UL),// (void*) TC8_Handler,    /* 29 Timer/Counter 8 */
 #else
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
+	(void*) (0UL),
+	(void*) (0UL),
+	(void*) (0UL),
 #endif  /* _SAM4E_TC2_INSTANCE_ */
 	(void*) ADC_Handler, // (void*) AFEC0_Handler,  /* 30 Analog Front End 0 */
-	(void*) Dummy_Handler,// (void*) AFEC1_Handler,  /* 31 Analog Front End 1 */
+	(void*) (0UL),// (void*) AFEC1_Handler,  /* 31 Analog Front End 1 */
 	(void*) DACC_Handler,   /* 32 Digital To Analog Converter */
 	(void*) ACC_Handler,    /* 33 Analog Comparator */
-	(void*) Dummy_Handler,// (void*) ARM_Handler,    /* 34 FPU signals : FPIXC, FPOFC, FPUFC, FPIOC, FPDZC, FPIDC, FPIXC */
+	(void*) (0UL),// (void*) ARM_Handler,    /* 34 FPU signals : FPIXC, FPOFC, FPUFC, FPIOC, FPDZC, FPIDC, FPIXC */
 	(void*) UDP_Handler,    /* 35 USB DEVICE */
 	(void*) PWM_Handler,    /* 36 PWM */
-	(void*) Dummy_Handler,// (void*) CAN0_Handler,   /* 37 CAN0 */
+	(void*) (0UL),// (void*) CAN0_Handler,   /* 37 CAN0 */
 #ifdef _SAM4E_CAN1_INSTANCE_
-	(void*) Dummy_Handler,// (void*) CAN1_Handler,   /* 38 CAN1 */
+	(void*) (0UL),// (void*) CAN1_Handler,   /* 38 CAN1 */
 #else
-	(void*) Dummy_Handler,
+	(void*) (0UL),
 #endif /* _SAM4E_CAN1_INSTANCE_ */
-	(void*) Dummy_Handler,// (void*) AES_Handler,    /* 39 AES */
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
-	(void*) Dummy_Handler,
+	(void*) (0UL),// (void*) AES_Handler,    /* 39 AES */
+	(void*) (0UL),
+	(void*) (0UL),
+	(void*) (0UL),
+	(void*) (0UL),
 #ifdef _SAM4E_GMAC_INSTANCE_
-	(void*) Dummy_Handler,// (void*) GMAC_Handler,   /* 44 EMAC */
+	(void*) (0UL),// (void*) GMAC_Handler,   /* 44 EMAC */
 #else
-	(void*) Dummy_Handler,
+	(void*) (0UL),
 #endif
 	(void*) UART1_Handler   /* 45 UART */
 };
