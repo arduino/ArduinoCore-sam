@@ -22,9 +22,12 @@ typedef void (*interruptCB)(void);
 
 static interruptCB callbacksPioA[32];
 static interruptCB callbacksPioB[32];
-#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
+#if (!defined(__SAM4S4A__))
 static interruptCB callbacksPioC[32];
 static interruptCB callbacksPioD[32];
+#endif
+#if (SAM4E_SERIES)
+static interruptCB callbacksPioE[6];
 #endif
 
 /* Configure PIO interrupt sources */
@@ -194,8 +197,8 @@ void PIOE_Handler(void) {
 	for (i=0; i<6; i++, isr>>=1) {
 		if ((isr & 0x1) == 0)
 			continue;
-		if (callbacksPioC[i])
-			callbacksPioC[i]();
+		if (callbacksPioE[i])
+			callbacksPioE[i]();
 	}
 }
 
