@@ -163,7 +163,7 @@ void PIOB_Handler(void) {
 	}
 }
 
-#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
+#if (!defined(__SAM4S4A__))  // SAM3: up to Pio F, SAM4S: C , SAM4E: PIOE
 void PIOC_Handler(void) {
 	uint32_t isr = PIOC->PIO_ISR;
 	uint32_t i;
@@ -186,6 +186,22 @@ void PIOD_Handler(void) {
 	}
 }
 #endif //SAM4S4A
+
+#if (SAM4E_SERIES)  //  SAM4E (144 pins): PIOE 0-5
+void PIOE_Handler(void) {
+	uint32_t isr = PIOE->PIO_ISR;
+	uint32_t i;
+	for (i=0; i<6; i++, isr>>=1) {
+		if ((isr & 0x1) == 0)
+			continue;
+		if (callbacksPioC[i])
+			callbacksPioC[i]();
+	}
+}
+
+#endif //SAM4E_SERIES
+
+
 
 #ifdef __cplusplus
 }
