@@ -1,33 +1,49 @@
-/* ----------------------------------------------------------------------------
- *         SAM Software Package License
- * ----------------------------------------------------------------------------
- * Copyright (c) 2012, Atmel Corporation
+/**
+ * \file
  *
- * All rights reserved.
+ * \brief Startup file for SAM4E.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following condition is met:
+ * Copyright (c) 2012-2018 Microchip Technology Inc. and its subsidiaries.
  *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the disclaimer below.
+ * \asf_license_start
  *
- * Atmel's name may not be used to endorse or promote products derived from
- * this software without specific prior written permission.
+ * \page License
  *
- * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ----------------------------------------------------------------------------
+ * Subject to your compliance with these terms, you may use Microchip
+ * software and any derivatives exclusively with Microchip products.
+ * It is your responsibility to comply with third party license terms applicable
+ * to your use of third party software (including open source software) that
+ * may accompany Microchip software.
+ *
+ * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
+ * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
+ * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
+ * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
+ * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
+ * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
+ * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
+ * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
+ * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
+ * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+ * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ *
+ * \asf_license_stop
+ *
+ */
+/*
+ * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
 
+// Based on https://github.com/avrxml/asf/blob/master/sam/utils/cmsis/sam4e/source/templates/gcc/startup_sam4e.c
+// and SAM4 startup
+
 #include "sam4e/include/sam4e.h"
+// #include "sam4e.h"
+// #include "exceptions.h"
+// #include "system_sam4e.h"
+// #if __FPU_USED /* CMSIS defined value to indicate usage of FPU */
+// #include "fpu.h"
+// #endif
 
 /* Initialize segments */
 extern uint32_t _sfixed;
@@ -111,7 +127,7 @@ const DeviceVectors exception_table = {
 	/* Configure Initial Stack Pointer, using linker-generated symbols */
 	(void*) (&_estack),
 	(void*) Reset_Handler,
-
+	
 	(void*) NMI_Handler,
 	(void*) HardFault_Handler,
 	(void*) MemManage_Handler,
@@ -132,59 +148,80 @@ const DeviceVectors exception_table = {
 	(void*) RSTC_Handler,    /* 1  Reset Controller */
 	(void*) RTC_Handler,     /* 2  Real Time Clock */
 	(void*) RTT_Handler,     /* 3  Real Time Timer */
-	(void*) WDT_Handler,     /* 4  Watchdog Timer */
-	(void*) PMC_Handler,     /* 5  PMC */
-	(void*) EFC_Handler,     /* 6  EEFC */
-	(void*) (0UL),           /* 7  Reserved */
-	(void*) UART0_Handler,   /* 8  UART0 */
-	(void*) UART1_Handler,   /* 9  UART1 */
-#ifdef _SAM4S_SMC_INSTANCE_
-	(void*) SMC_Handler,     /* 10 SMC */
+	(void*) WDT_Handler,     /* 4  Watchdog/Dual Watchdog Timer */
+	(void*) PMC_Handler,     /* 5  Power Management Controller */
+	(void*) EFC_Handler,     /* 6  Enhanced Embedded Flash Controller */
+	(void*) UART0_Handler,  /* 7  UART 0 */
+	(void*) Dummy_Handler,
+	(void*) PIOA_Handler,   /* 9  Parallel I/O Controller A */
+	(void*) PIOB_Handler,   /* 10 Parallel I/O Controller B */
+#ifdef _SAM4E_PIOC_INSTANCE_
+	(void*) PIOC_Handler,   /* 11 Parallel I/O Controller C */
 #else
-	(void*) (0UL),           /* 10 Reserved */
-#endif /* _SAM4S_SMC_INSTANCE_ */
-	(void*) PIOA_Handler,    /* 11 Parallel IO Controller A */
-	(void*) PIOB_Handler,    /* 12 Parallel IO Controller B */
-#ifdef _SAM4S_PIOC_INSTANCE_
-	(void*) PIOC_Handler,    /* 13 Parallel IO Controller C */
+	(void*) Dummy_Handler,
+#endif
+#ifdef _SAM4E_PIOD_INSTANCE_
+	(void*) PIOD_Handler,   /* 12 Parallel I/O Controller D */
 #else
-	(void*) (0UL),           /* 13 Reserved */
-#endif /* _SAM4S_PIOC_INSTANCE_ */
-	(void*) USART0_Handler,  /* 14 USART 0 */
-#ifdef _SAM4S_USART1_INSTANCE_
-	(void*) USART1_Handler,  /* 15 USART 1 */
+	(void*)Dummy_Handler,
+#endif
+#ifdef _SAM4E_PIOE_INSTANCE_
+	(void*) PIOE_Handler,   /* 13 Parallel I/O Controller E */
 #else
-	(void*) (0UL),           /* 15 Reserved */
-#endif /* _SAM4S_USART1_INSTANCE_ */
-	(void*) (0UL),           /* 16 Reserved */
-	(void*) (0UL),           /* 17 Reserved */
-#ifdef _SAM4S_HSMCI_INSTANCE_
-	(void*) HSMCI_Handler,   /* 18 MCI */
+	(void*) Dummy_Handler,
+#endif
+	(void*) USART0_Handler, /* 14 USART 0 */
+	(void*) USART1_Handler, /* 15 USART 1 */
+	(void*) HSMCI_Handler,  /* 16 Multimedia Card Interface */
+	(void*) TWI0_Handler,   /* 17 Two Wire Interface 0 */
+	(void*) TWI1_Handler,   /* 18 Two Wire Interface 1 */
+	(void*) SPI_Handler,    /* 19 Serial Peripheral Interface */
+	(void*) DMAC_Handler,   /* 20 DMAC */
+	(void*) TC0_Handler,    /* 21 Timer/Counter 0 */
+	(void*) TC1_Handler,    /* 22 Timer/Counter 1 */
+	(void*) TC2_Handler,    /* 23 Timer/Counter 2 */
+#ifdef _SAM4E_TC1_INSTANCE_
+	(void*) TC3_Handler,    /* 24 Timer/Counter 3 */
+	(void*) TC4_Handler,    /* 25 Timer/Counter 4 */
+	(void*) TC5_Handler,    /* 26 Timer/Counter 5 */
 #else
-	(void*) (0UL),           /* 18 Reserved */
-#endif /* _SAM4S_HSMCI_INSTANCE_ */
-	(void*) TWI0_Handler,    /* 19 TWI 0 */
-	(void*) TWI1_Handler,    /* 20 TWI 1 */
-	(void*) SPI_Handler,     /* 21 SPI */
-	(void*) SSC_Handler,     /* 22 SSC */
-	(void*) TC0_Handler,     /* 23 Timer Counter 0 */
-	(void*) TC1_Handler,     /* 24 Timer Counter 1 */
-	(void*) TC2_Handler,     /* 25 Timer Counter 2 */
-#ifdef _SAM4S_TC1_INSTANCE_
-	(void*) TC3_Handler,     /* 26 Timer Counter 3 */
-	(void*) TC4_Handler,     /* 27 Timer Counter 4 */
-	(void*) TC5_Handler,     /* 28 Timer Counter 5 */
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+#endif  /* _SAM4E_TC1_INSTANCE_ */
+#ifdef _SAM4E_TC2_INSTANCE_
+	(void*) TC6_Handler,    /* 27 Timer/Counter 6 */
+	(void*) TC7_Handler,    /* 28 Timer/Counter 7 */
+	(void*) TC8_Handler,    /* 29 Timer/Counter 8 */
 #else
-	(void*) (0UL),           /* 26 Reserved */
-	(void*) (0UL),           /* 27 Reserved */
-	(void*) (0UL),           /* 28 Reserved */
-#endif /* _SAM4S_TC1_INSTANCE_ */
-	(void*) ADC_Handler,     /* 29 ADC controller */
-	(void*) DACC_Handler,    /* 30 DAC controller */
-	(void*) PWM_Handler,     /* 31 PWM */
-	(void*) CRCCU_Handler,   /* 32 CRC Calculation Unit */
-	(void*) ACC_Handler,     /* 33 Analog Comparator */
-	(void*) UDP_Handler      /* 34 USB Device Port */
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+#endif  /* _SAM4E_TC2_INSTANCE_ */
+	(void*) AFEC0_Handler,  /* 30 Analog Front End 0 */
+	(void*) AFEC1_Handler,  /* 31 Analog Front End 1 */
+	(void*) DACC_Handler,   /* 32 Digital To Analog Converter */
+	(void*) ACC_Handler,    /* 33 Analog Comparator */
+	(void*) ARM_Handler,    /* 34 FPU signals : FPIXC, FPOFC, FPUFC, FPIOC, FPDZC, FPIDC, FPIXC */
+	(void*) UDP_Handler,    /* 35 USB DEVICE */
+	(void*) PWM_Handler,    /* 36 PWM */
+	(void*) CAN0_Handler,   /* 37 CAN0 */
+#ifdef _SAM4E_CAN1_INSTANCE_
+	(void*) CAN1_Handler,   /* 38 CAN1 */
+#else
+	(void*) Dummy_Handler,
+#endif /* _SAM4E_CAN1_INSTANCE_ */
+	(void*) AES_Handler,    /* 39 AES */
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+	(void*) Dummy_Handler,
+#ifdef _SAM4E_GMAC_INSTANCE_
+	(void*) GMAC_Handler,   /* 44 EMAC */
+#else
+	(void*) Dummy_Handler,
+#endif
+	(void*) UART1_Handler   /* 45 UART */
 };
 
 /**
@@ -213,6 +250,10 @@ void Reset_Handler(void)
 	/* Set the vector table base address */
 	pSrc = (uint32_t *) & _sfixed;
 	SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
+
+// #if __FPU_USED
+// 	fpu_enable();
+// #endif
 
 	/* Initialize the C library */
 	__libc_init_array();
