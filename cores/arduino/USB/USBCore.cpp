@@ -1356,8 +1356,8 @@ uint32_t UDD_Init(void)
 	// - USB clock divider: 2 (divided by 2)
 	// - PLLB output: XTAL * 16 / 2
 	// - USB clock: 12 * 16 / 2 / 2 = 48MHz
-	pmc_enable_pllbck(15, 48, 2); //mult-1,startup count,div
-	pmc_switch_udpck_to_pllbck(1); //div-1.
+	// pmc_enable_pllbck(15, 48, 2); //mult-1,startup count,div
+	// pmc_switch_udpck_to_pllbck(1); //div-1.
 	pmc_enable_udpck();
 	// Cortex, uses NVIC, no need to register IRQ handler
 	NVIC_SetPriority((IRQn_Type) ID_UDP, UDD_USB_INT_LEVEL);
