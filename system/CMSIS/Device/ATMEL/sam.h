@@ -142,6 +142,9 @@
 /* Entire SAM3XA series */
 #define SAM3XA_SERIES ( SAM3X4 || SAM3X8 || SAM3A4 || SAM3A8)
 
+/* Entire SAM3 family */
+#define SAM3_SERIES (SAM3U_SERIES || SAM3XA_SERIES)
+
 // #ifdef SAM3XA_SERIES
 // #warning SAM3XA_SERIES  defined
 // #endif
@@ -204,7 +207,7 @@
     part_is_defined( SAM4E16C ) || \
     part_is_defined( SAM4E16E ) )
 
-/* Entire SAM4S series */
+/* Entire SAM4E series */
 #define SAM4E_SERIES ( SAM4E8 || SAM4E16 )
 
 // #ifdef SAM4E_SERIES
@@ -243,11 +246,11 @@
  * ----------------------------------------------------------------------------
  */
 
-#if (defined(SAM3_SERIES) && SAM3_SERIES)
+#if SAM3_SERIES
 #include "sam3.h"
 #endif /* SAM3 */
 
-#if (defined(SAM4_SERIES) && SAM4_SERIES)
+#if SAM4_SERIES
 #include "sam4.h"
 #endif /* SAM4 */
 
