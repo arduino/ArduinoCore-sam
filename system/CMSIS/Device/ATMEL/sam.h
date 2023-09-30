@@ -243,11 +243,11 @@
  * ----------------------------------------------------------------------------
  */
 
-#if (SAM3_SERIES)
+#if (defined(SAM3_SERIES) && SAM3_SERIES)
 #include "sam3.h"
 #endif /* SAM3 */
 
-#if (SAM4_SERIES)
+#if (defined(SAM4_SERIES) && SAM4_SERIES)
 #include "sam4.h"
 #endif /* SAM4 */
 
