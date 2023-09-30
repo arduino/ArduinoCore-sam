@@ -70,13 +70,21 @@ void SMC_Handler        ( void ) __attribute__ ((weak, alias("__halt")));
 void PIOA_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
 void PIOB_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
 
-#ifdef _SAM4S_PIOC_INSTANCE_
+#if defined(_SAM4S_PIOC_INSTANCE_) || defined(_SAM4E_PIOC_INSTANCE_)
 void PIOC_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
 #endif /* _SAM4S_PIOC_INSTANCE_ */
 
+#if defined(_SAM4E_PIOD_INSTANCE_)
+void PIOD_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
+#endif /* _SAM4E_PIOD_INSTANCE_ */
+
+#if defined(_SAM4E_PIOE_INSTANCE_)
+void PIOE_Handler       ( void ) __attribute__ ((weak, alias("__halt")));
+#endif /* _SAM4E_PIOE_INSTANCE_ */
+
 void USART0_Handler     ( void ) __attribute__ ((weak, alias("__halt")));
 
-#ifdef _SAM4S_USART1_INSTANCE_
+#if defined(_SAM4S_USART1_INSTANCE_) || defined(_SAM4E_USART1_INSTANCE_)
 void USART1_Handler     ( void ) __attribute__ ((weak, alias("__halt")));
 #endif /* _SAM4S_USART1_INSTANCE_ */
 

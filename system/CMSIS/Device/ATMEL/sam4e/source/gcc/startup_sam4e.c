@@ -86,14 +86,23 @@ void PMC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void EFC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void UART0_Handler      ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void UART1_Handler      ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-// #ifdef _SAM4S_SMC_INSTANCE_
-// void SMC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-// #endif /* _SAM4S_SMC_INSTANCE_ */
+#if defined(_SAM4S_SMC_INSTANCE_) || defined(_SAM4E_SMC_INSTANCE_) 
+void SMC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+#endif /* _SAM4S_SMC_INSTANCE_ or _SAM4E_SMC_INSTANCE_*/
 void PIOA_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void PIOB_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 #ifdef _SAM4E_PIOC_INSTANCE_
 void PIOC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 #endif /* _SAM4E_PIOC_INSTANCE_ */
+
+#ifdef _SAM4E_PIOD_INSTANCE_
+void PIOD_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+#endif /* _SAM4E_PIOD_INSTANCE_ */
+
+#ifdef _SAM4E_PIOE_INSTANCE_
+void PIOE_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+#endif /* _SAM4E_PIOE_INSTANCE_ */
+
 void USART0_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 #ifdef _SAM4E_USART1_INSTANCE_
 void USART1_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
@@ -176,7 +185,7 @@ const DeviceVectors exception_table = {
 	(void*) TWI0_Handler,   /* 17 Two Wire Interface 0 */
 	(void*) TWI1_Handler,   /* 18 Two Wire Interface 1 */
 	(void*) SPI_Handler,    /* 19 Serial Peripheral Interface */
-	(void*) DMAC_Handler,   /* 20 DMAC */
+	(void*) Dummy_Handler,// (void*) DMAC_Handler,   /* 20 DMAC */
 	(void*) TC0_Handler,    /* 21 Timer/Counter 0 */
 	(void*) TC1_Handler,    /* 22 Timer/Counter 1 */
 	(void*) TC2_Handler,    /* 23 Timer/Counter 2 */
@@ -190,34 +199,34 @@ const DeviceVectors exception_table = {
 	(void*) Dummy_Handler,
 #endif  /* _SAM4E_TC1_INSTANCE_ */
 #ifdef _SAM4E_TC2_INSTANCE_
-	(void*) TC6_Handler,    /* 27 Timer/Counter 6 */
-	(void*) TC7_Handler,    /* 28 Timer/Counter 7 */
-	(void*) TC8_Handler,    /* 29 Timer/Counter 8 */
+	(void*) Dummy_Handler,// (void*) TC6_Handler,    /* 27 Timer/Counter 6 */
+	(void*) Dummy_Handler,// void*) TC7_Handler,    /* 28 Timer/Counter 7 */
+	(void*) Dummy_Handler,// (void*) TC8_Handler,    /* 29 Timer/Counter 8 */
 #else
 	(void*) Dummy_Handler,
 	(void*) Dummy_Handler,
 	(void*) Dummy_Handler,
 #endif  /* _SAM4E_TC2_INSTANCE_ */
-	(void*) AFEC0_Handler,  /* 30 Analog Front End 0 */
-	(void*) AFEC1_Handler,  /* 31 Analog Front End 1 */
+	(void*) ADC_Handler, // (void*) AFEC0_Handler,  /* 30 Analog Front End 0 */
+	(void*) Dummy_Handler,// (void*) AFEC1_Handler,  /* 31 Analog Front End 1 */
 	(void*) DACC_Handler,   /* 32 Digital To Analog Converter */
 	(void*) ACC_Handler,    /* 33 Analog Comparator */
-	(void*) ARM_Handler,    /* 34 FPU signals : FPIXC, FPOFC, FPUFC, FPIOC, FPDZC, FPIDC, FPIXC */
+	(void*) Dummy_Handler,// (void*) ARM_Handler,    /* 34 FPU signals : FPIXC, FPOFC, FPUFC, FPIOC, FPDZC, FPIDC, FPIXC */
 	(void*) UDP_Handler,    /* 35 USB DEVICE */
 	(void*) PWM_Handler,    /* 36 PWM */
-	(void*) CAN0_Handler,   /* 37 CAN0 */
+	(void*) Dummy_Handler,// (void*) CAN0_Handler,   /* 37 CAN0 */
 #ifdef _SAM4E_CAN1_INSTANCE_
-	(void*) CAN1_Handler,   /* 38 CAN1 */
+	(void*) Dummy_Handler,// (void*) CAN1_Handler,   /* 38 CAN1 */
 #else
 	(void*) Dummy_Handler,
 #endif /* _SAM4E_CAN1_INSTANCE_ */
-	(void*) AES_Handler,    /* 39 AES */
+	(void*) Dummy_Handler,// (void*) AES_Handler,    /* 39 AES */
 	(void*) Dummy_Handler,
 	(void*) Dummy_Handler,
 	(void*) Dummy_Handler,
 	(void*) Dummy_Handler,
 #ifdef _SAM4E_GMAC_INSTANCE_
-	(void*) GMAC_Handler,   /* 44 EMAC */
+	(void*) Dummy_Handler,// (void*) GMAC_Handler,   /* 44 EMAC */
 #else
 	(void*) Dummy_Handler,
 #endif
