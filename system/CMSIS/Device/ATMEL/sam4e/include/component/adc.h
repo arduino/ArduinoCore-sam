@@ -44,8 +44,8 @@ typedef struct {
   WoReg ADC_CR;        /**< \brief (Afec Offset: 0x00) Control Register */
   RwReg ADC_MR;        /**< \brief (Afec Offset: 0x04) Mode Register */
   RwReg ADC_EMR;       /**< \brief (Afec Offset: 0x08) Extended Mode Register */
-  RwReg ADC_SEQ1R;     /**< \brief (Afec Offset: 0x0C) Channel Sequence 1 Register */
-  RwReg ADC_SEQ2R;     /**< \brief (Afec Offset: 0x10) Channel Sequence 2 Register */
+  RwReg ADC_SEQR1;     /**< \brief (Afec Offset: 0x0C) Channel Sequence 1 Register */
+  RwReg ADC_SEQR2;     /**< \brief (Afec Offset: 0x10) Channel Sequence 2 Register */
   WoReg ADC_CHER;      /**< \brief (Afec Offset: 0x14) Channel Enable Register */
   WoReg ADC_CHDR;      /**< \brief (Afec Offset: 0x18) Channel Disable Register */
   RoReg ADC_CHSR;      /**< \brief (Afec Offset: 0x1C) Channel Status Register */
@@ -63,7 +63,8 @@ typedef struct {
   RwReg ADC_DIFFR;     /**< \brief (Afec Offset: 0x60) Channel Differential Register */
   RwReg ADC_CSELR;     /**< \brief (Afec Offset: 0x64) Channel Register Selection */
   RoReg ADC_CDR;       /**< \brief (Afec Offset: 0x68) Channel Data Register */
-  RwReg ADC_COCR;      /**< \brief (Afec Offset: 0x6C) Channel Offset Compensation Register */
+  // Make Names coincide with sam4s 
+  RwReg ADC_COR;      /**< \brief (Afec Offset: 0x6C) Channel Offset Compensation Register */
   RwReg ADC_TEMPMR;    /**< \brief (Afec Offset: 0x70) Temperature Sensor Mode Register */
   RwReg ADC_TEMPCWR;   /**< \brief (Afec Offset: 0x74) Temperature Compare Window Register */
   RoReg Reserved3[7];
@@ -170,56 +171,56 @@ typedef struct {
 #define   ADC_EMR_RES_OSR256 (0x5u << 16) /**< \brief (ADC_EMR) 16-bit resolution, AFE sample rate divided by 256 (averaging). */
 #define ADC_EMR_TAG (0x1u << 24) /**< \brief (ADC_EMR) TAG of ADC_LDCR register */
 #define ADC_EMR_STM (0x1u << 25) /**< \brief (ADC_EMR) Single Trigger Mode */
-/* -------- ADC_SEQ1R : (AFEC Offset: 0x0C) Channel Sequence 1 Register -------- */
-#define ADC_SEQ1R_USCH0_Pos 0
-#define ADC_SEQ1R_USCH0_Msk (0xfu << ADC_SEQ1R_USCH0_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 0 */
-#define ADC_SEQ1R_USCH0(value) ((ADC_SEQ1R_USCH0_Msk & ((value) << ADC_SEQ1R_USCH0_Pos)))
-#define ADC_SEQ1R_USCH1_Pos 4
-#define ADC_SEQ1R_USCH1_Msk (0xfu << ADC_SEQ1R_USCH1_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 1 */
-#define ADC_SEQ1R_USCH1(value) ((ADC_SEQ1R_USCH1_Msk & ((value) << ADC_SEQ1R_USCH1_Pos)))
-#define ADC_SEQ1R_USCH2_Pos 8
-#define ADC_SEQ1R_USCH2_Msk (0xfu << ADC_SEQ1R_USCH2_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 2 */
-#define ADC_SEQ1R_USCH2(value) ((ADC_SEQ1R_USCH2_Msk & ((value) << ADC_SEQ1R_USCH2_Pos)))
-#define ADC_SEQ1R_USCH3_Pos 12
-#define ADC_SEQ1R_USCH3_Msk (0xfu << ADC_SEQ1R_USCH3_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 3 */
-#define ADC_SEQ1R_USCH3(value) ((ADC_SEQ1R_USCH3_Msk & ((value) << ADC_SEQ1R_USCH3_Pos)))
-#define ADC_SEQ1R_USCH4_Pos 16
-#define ADC_SEQ1R_USCH4_Msk (0xfu << ADC_SEQ1R_USCH4_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 4 */
-#define ADC_SEQ1R_USCH4(value) ((ADC_SEQ1R_USCH4_Msk & ((value) << ADC_SEQ1R_USCH4_Pos)))
-#define ADC_SEQ1R_USCH5_Pos 20
-#define ADC_SEQ1R_USCH5_Msk (0xfu << ADC_SEQ1R_USCH5_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 5 */
-#define ADC_SEQ1R_USCH5(value) ((ADC_SEQ1R_USCH5_Msk & ((value) << ADC_SEQ1R_USCH5_Pos)))
-#define ADC_SEQ1R_USCH6_Pos 24
-#define ADC_SEQ1R_USCH6_Msk (0xfu << ADC_SEQ1R_USCH6_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 6 */
-#define ADC_SEQ1R_USCH6(value) ((ADC_SEQ1R_USCH6_Msk & ((value) << ADC_SEQ1R_USCH6_Pos)))
-#define ADC_SEQ1R_USCH7_Pos 28
-#define ADC_SEQ1R_USCH7_Msk (0xfu << ADC_SEQ1R_USCH7_Pos) /**< \brief (ADC_SEQ1R) User Sequence Number 7 */
-#define ADC_SEQ1R_USCH7(value) ((ADC_SEQ1R_USCH7_Msk & ((value) << ADC_SEQ1R_USCH7_Pos)))
-/* -------- ADC_SEQ2R : (AFEC Offset: 0x10) Channel Sequence 2 Register -------- */
-#define ADC_SEQ2R_USCH8_Pos 0
-#define ADC_SEQ2R_USCH8_Msk (0xfu << ADC_SEQ2R_USCH8_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 8 */
-#define ADC_SEQ2R_USCH8(value) ((ADC_SEQ2R_USCH8_Msk & ((value) << ADC_SEQ2R_USCH8_Pos)))
-#define ADC_SEQ2R_USCH9_Pos 4
-#define ADC_SEQ2R_USCH9_Msk (0xfu << ADC_SEQ2R_USCH9_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 9 */
-#define ADC_SEQ2R_USCH9(value) ((ADC_SEQ2R_USCH9_Msk & ((value) << ADC_SEQ2R_USCH9_Pos)))
-#define ADC_SEQ2R_USCH10_Pos 8
-#define ADC_SEQ2R_USCH10_Msk (0xfu << ADC_SEQ2R_USCH10_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 10 */
-#define ADC_SEQ2R_USCH10(value) ((ADC_SEQ2R_USCH10_Msk & ((value) << ADC_SEQ2R_USCH10_Pos)))
-#define ADC_SEQ2R_USCH11_Pos 12
-#define ADC_SEQ2R_USCH11_Msk (0xfu << ADC_SEQ2R_USCH11_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 11 */
-#define ADC_SEQ2R_USCH11(value) ((ADC_SEQ2R_USCH11_Msk & ((value) << ADC_SEQ2R_USCH11_Pos)))
-#define ADC_SEQ2R_USCH12_Pos 16
-#define ADC_SEQ2R_USCH12_Msk (0xfu << ADC_SEQ2R_USCH12_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 12 */
-#define ADC_SEQ2R_USCH12(value) ((ADC_SEQ2R_USCH12_Msk & ((value) << ADC_SEQ2R_USCH12_Pos)))
-#define ADC_SEQ2R_USCH13_Pos 20
-#define ADC_SEQ2R_USCH13_Msk (0xfu << ADC_SEQ2R_USCH13_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 13 */
-#define ADC_SEQ2R_USCH13(value) ((ADC_SEQ2R_USCH13_Msk & ((value) << ADC_SEQ2R_USCH13_Pos)))
-#define ADC_SEQ2R_USCH14_Pos 24
-#define ADC_SEQ2R_USCH14_Msk (0xfu << ADC_SEQ2R_USCH14_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 14 */
-#define ADC_SEQ2R_USCH14(value) ((ADC_SEQ2R_USCH14_Msk & ((value) << ADC_SEQ2R_USCH14_Pos)))
-#define ADC_SEQ2R_USCH15_Pos 28
-#define ADC_SEQ2R_USCH15_Msk (0xfu << ADC_SEQ2R_USCH15_Pos) /**< \brief (ADC_SEQ2R) User Sequence Number 15 */
-#define ADC_SEQ2R_USCH15(value) ((ADC_SEQ2R_USCH15_Msk & ((value) << ADC_SEQ2R_USCH15_Pos)))
+/* -------- ADC_SEQR1 : (AFEC Offset: 0x0C) Channel Sequence 1 Register -------- */
+#define ADC_SEQR1_USCH0_Pos 0
+#define ADC_SEQR1_USCH0_Msk (0xfu << ADC_SEQR1_USCH0_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 0 */
+#define ADC_SEQR1_USCH0(value) ((ADC_SEQR1_USCH0_Msk & ((value) << ADC_SEQR1_USCH0_Pos)))
+#define ADC_SEQR1_USCH1_Pos 4
+#define ADC_SEQR1_USCH1_Msk (0xfu << ADC_SEQR1_USCH1_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 1 */
+#define ADC_SEQR1_USCH1(value) ((ADC_SEQR1_USCH1_Msk & ((value) << ADC_SEQR1_USCH1_Pos)))
+#define ADC_SEQR1_USCH2_Pos 8
+#define ADC_SEQR1_USCH2_Msk (0xfu << ADC_SEQR1_USCH2_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 2 */
+#define ADC_SEQR1_USCH2(value) ((ADC_SEQR1_USCH2_Msk & ((value) << ADC_SEQR1_USCH2_Pos)))
+#define ADC_SEQR1_USCH3_Pos 12
+#define ADC_SEQR1_USCH3_Msk (0xfu << ADC_SEQR1_USCH3_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 3 */
+#define ADC_SEQR1_USCH3(value) ((ADC_SEQR1_USCH3_Msk & ((value) << ADC_SEQR1_USCH3_Pos)))
+#define ADC_SEQR1_USCH4_Pos 16
+#define ADC_SEQR1_USCH4_Msk (0xfu << ADC_SEQR1_USCH4_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 4 */
+#define ADC_SEQR1_USCH4(value) ((ADC_SEQR1_USCH4_Msk & ((value) << ADC_SEQR1_USCH4_Pos)))
+#define ADC_SEQR1_USCH5_Pos 20
+#define ADC_SEQR1_USCH5_Msk (0xfu << ADC_SEQR1_USCH5_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 5 */
+#define ADC_SEQR1_USCH5(value) ((ADC_SEQR1_USCH5_Msk & ((value) << ADC_SEQR1_USCH5_Pos)))
+#define ADC_SEQR1_USCH6_Pos 24
+#define ADC_SEQR1_USCH6_Msk (0xfu << ADC_SEQR1_USCH6_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 6 */
+#define ADC_SEQR1_USCH6(value) ((ADC_SEQR1_USCH6_Msk & ((value) << ADC_SEQR1_USCH6_Pos)))
+#define ADC_SEQR1_USCH7_Pos 28
+#define ADC_SEQR1_USCH7_Msk (0xfu << ADC_SEQR1_USCH7_Pos) /**< \brief (ADC_SEQR1) User Sequence Number 7 */
+#define ADC_SEQR1_USCH7(value) ((ADC_SEQR1_USCH7_Msk & ((value) << ADC_SEQR1_USCH7_Pos)))
+/* -------- ADC_SEQR2 : (AFEC Offset: 0x10) Channel Sequence 2 Register -------- */
+#define ADC_SEQR2_USCH8_Pos 0
+#define ADC_SEQR2_USCH8_Msk (0xfu << ADC_SEQR2_USCH8_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 8 */
+#define ADC_SEQR2_USCH8(value) ((ADC_SEQR2_USCH8_Msk & ((value) << ADC_SEQR2_USCH8_Pos)))
+#define ADC_SEQR2_USCH9_Pos 4
+#define ADC_SEQR2_USCH9_Msk (0xfu << ADC_SEQR2_USCH9_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 9 */
+#define ADC_SEQR2_USCH9(value) ((ADC_SEQR2_USCH9_Msk & ((value) << ADC_SEQR2_USCH9_Pos)))
+#define ADC_SEQR2_USCH10_Pos 8
+#define ADC_SEQR2_USCH10_Msk (0xfu << ADC_SEQR2_USCH10_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 10 */
+#define ADC_SEQR2_USCH10(value) ((ADC_SEQR2_USCH10_Msk & ((value) << ADC_SEQR2_USCH10_Pos)))
+#define ADC_SEQR2_USCH11_Pos 12
+#define ADC_SEQR2_USCH11_Msk (0xfu << ADC_SEQR2_USCH11_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 11 */
+#define ADC_SEQR2_USCH11(value) ((ADC_SEQR2_USCH11_Msk & ((value) << ADC_SEQR2_USCH11_Pos)))
+#define ADC_SEQR2_USCH12_Pos 16
+#define ADC_SEQR2_USCH12_Msk (0xfu << ADC_SEQR2_USCH12_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 12 */
+#define ADC_SEQR2_USCH12(value) ((ADC_SEQR2_USCH12_Msk & ((value) << ADC_SEQR2_USCH12_Pos)))
+#define ADC_SEQR2_USCH13_Pos 20
+#define ADC_SEQR2_USCH13_Msk (0xfu << ADC_SEQR2_USCH13_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 13 */
+#define ADC_SEQR2_USCH13(value) ((ADC_SEQR2_USCH13_Msk & ((value) << ADC_SEQR2_USCH13_Pos)))
+#define ADC_SEQR2_USCH14_Pos 24
+#define ADC_SEQR2_USCH14_Msk (0xfu << ADC_SEQR2_USCH14_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 14 */
+#define ADC_SEQR2_USCH14(value) ((ADC_SEQR2_USCH14_Msk & ((value) << ADC_SEQR2_USCH14_Pos)))
+#define ADC_SEQR2_USCH15_Pos 28
+#define ADC_SEQR2_USCH15_Msk (0xfu << ADC_SEQR2_USCH15_Pos) /**< \brief (ADC_SEQR2) User Sequence Number 15 */
+#define ADC_SEQR2_USCH15(value) ((ADC_SEQR2_USCH15_Msk & ((value) << ADC_SEQR2_USCH15_Pos)))
 /* -------- ADC_CHER : (AFEC Offset: 0x14) Channel Enable Register -------- */
 #define ADC_CHER_CH0 (0x1u << 0) /**< \brief (ADC_CHER) Channel 0 Enable */
 #define ADC_CHER_CH1 (0x1u << 1) /**< \brief (ADC_CHER) Channel 1 Enable */
