@@ -25,7 +25,8 @@ SUBMAKE_OPTIONS=--no-builtin-rules --no-builtin-variables --no-print-directory
 #-------------------------------------------------------------------------------
 
 # libsam_sam3s4c_gcc_rel.a libsam_sam3u4e_gcc_rel.a libsam_sam3x8e_gcc_rel.a libsam_sam3x8h_gcc_rel.a
-all: libsam_sam4s4a_gcc_rel.a libsam_sam4s4a_gcc_dbg.a motionbow libsam_sam4e8e_gcc_rel.a
+# libsam_sam4s4a_gcc_rel.a libsam_sam4s4a_gcc_dbg.a motionbow 
+all: libsam_sam4e8e_gcc_rel.a
 
 .PHONY: libsam_sam4e8e_gcc_rel.a
 libsam_sam4e8e_gcc_rel.a:

@@ -143,16 +143,6 @@ $(CHIP): create_output $(OUTPUT_LIB)
 create_output:
 	@echo ---sam4.mk{-------------------------------------------------------------------------
 	@echo --- Preparing $(CHIP) files $(OUTPUT_PATH) to $(OUTPUT_BIN)
-#	@echo -------------------------
-#	@echo *$(C_SRC)
-#	@echo -------------------------
-#	@echo *$(C_OBJ)
-#	@echo -------------------------
-#	@echo *$(addprefix $(OUTPUT_PATH)/, $(C_OBJ))
-#	@echo -------------------------
-#	@echo *$(A_SRC)
-#	@echo -------------------------
-
 	-@mkdir $(subst /,$(SEP),$(OUTPUT_BIN)) 1>$(DEV_NUL) 2>&1
 	-@mkdir $(OUTPUT_PATH) 1>$(DEV_NUL) 2>&1
 	@echo ---}sam4.mk-------------------------------------------------------------------------
