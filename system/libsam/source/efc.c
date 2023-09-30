@@ -65,9 +65,9 @@ extern "C" {
 #if (SAM3XA_SERIES || SAM3U_SERIES /*|| SAM4SD16 || SAM4SD32*/)
 # define READ_BUFF_ADDR0    IFLASH0_ADDR
 # define READ_BUFF_ADDR1    IFLASH1_ADDR
-#elif (SAM3S_SERIES || SAM3N_SERIES)
+#elif (SAM3S_SERIES || SAM3N_SERIES || SAM4E_SERIES)
 # define READ_BUFF_ADDR     IFLASH_ADDR
-#elif (SAM3U_SERIES || SAM4S_SERIES || SAM4E_SERIES)
+#elif (SAM3U_SERIES || SAM4S_SERIES)
 # define READ_BUFF_ADDR     IFLASH0_ADDR
 #else
 # warning Only reading unique id for sam3 is implemented.

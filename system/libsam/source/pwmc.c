@@ -535,7 +535,11 @@ void PWMC_FaultClear( Pwm* pPwm, uint32_t fault)
  */
 void PWMC_SetFaultProtectionValue( Pwm* pPwm, uint32_t value)
 {
+#if (SAM4E_SERIES)    
+    pPwm->PWM_FPV1 = value;
+#else
     pPwm->PWM_FPV = value;
+#endif    
 }
 
 /**

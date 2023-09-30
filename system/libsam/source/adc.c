@@ -455,13 +455,18 @@ uint32_t adc_get_channel_status(const Adc *p_adc, const enum adc_channel_num_t a
  *
  * \return ADC value of the specified channel.
  */
+#warning adc_get_channel_value!!
 uint32_t adc_get_channel_value(const Adc *p_adc, const enum adc_channel_num_t adc_ch)
 {
 	uint32_t ul_data = 0;
 
-	if (15 >= adc_ch) {
-		ul_data = *(p_adc->ADC_CDR + adc_ch);
-	}
+	#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+		if (15 >= adc_ch) {
+			ul_data = *(p_adc->ADC_CDR + adc_ch);
+		}
+	#elif SAM4E_SERIES
+		ul_data = 0; // To be implemented... first Select channel AFEC_CSELR then read ADC_CDR
+	#endif	
 
 	return ul_data;
 }
@@ -799,7 +804,7 @@ void adc_set_bias_current(Adc *p_adc, const uint8_t uc_ibctl)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
 /**
  * \brief Turn on temperature sensor.
  *
@@ -809,9 +814,16 @@ void adc_enable_ts(Adc *p_adc)
 {
 	p_adc->ADC_ACR |= ADC_ACR_TSON;
 }
+
+#elif SAM4E_SERIES
+#warning SAM4E_SERIES temp sensor not implemented
+void adc_enable_ts(Adc *p_adc)
+{
+	int i = 0; // To be implemented, The temperature sensor is connected to Channel 15 of the AFEC	
+}
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
 /**
  * \brief Turn off temperature sensor.
  *
@@ -821,6 +833,12 @@ void adc_disable_ts(Adc *p_adc)
 {
 	p_adc->ADC_ACR &= ~ADC_ACR_TSON;
 }
+#elif SAM4E_SERIES
+#warning SAM4E_SERIES
+// void adc_enable_ts(Adc *p_adc)
+// {
+// 	p_adc->ADC_ACR |= ADC_ACR_TSON;
+// }
 #endif
 
 #if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
