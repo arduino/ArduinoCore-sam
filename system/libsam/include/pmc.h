@@ -134,7 +134,7 @@ void pmc_enable_pllack(uint32_t mula, uint32_t pllacount, uint32_t diva);
 void pmc_disable_pllack(void);
 uint32_t pmc_is_locked_pllack(void);
 
-#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES)
 void pmc_enable_pllbck(uint32_t mulb, uint32_t pllbcount, uint32_t divb);
 void pmc_disable_pllbck(void);
 uint32_t pmc_is_locked_pllbck(void);
