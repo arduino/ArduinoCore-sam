@@ -32,7 +32,7 @@ libsam_sam4e8e_gcc_rel.a:
 	@echo ------------------------------------------------------------------------------------
 	@echo --- Making $@
 	@echo ---
-	@$(MAKE) CHIP=__SAM4E8E__ $(SUBMAKE_OPTIONS) OUTPUT_BIN=../../../variants/motionbow -f sam4.mk
+	@$(MAKE) CHIP=__SAM4E8E__ $(SUBMAKE_OPTIONS) OUTPUT_BIN=../../../variants/sam4e8e -f sam4.mk
 	@echo ------------------------------------------------------------------------------------
 
 .PHONY: motionbow
