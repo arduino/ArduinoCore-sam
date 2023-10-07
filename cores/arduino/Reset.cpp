@@ -23,14 +23,25 @@
 extern "C" {
 #endif
 
+#ifdef SAM4_SERIES
+
+#define EEFC_FCR_FCMD(value) ((EEFC_FCR_FCMD_Msk & ((value) << EEFC_FCR_FCMD_Pos)))
+#define EEFC_FCR_FKEY(value) ((EEFC_FCR_FKEY_Msk & ((value) << EEFC_FCR_FKEY_Pos)))
+#define RSTC_CR_KEY(value) ((RSTC_CR_KEY_Msk & ((value) << RSTC_CR_KEY_Pos)))
+
+#endif
+
+
 __attribute__ ((long_call, section (".ramfunc")))
 void banzai() {
 	// Disable all interrupts
 	__disable_irq();
 
 	// Set bootflag to run SAM-BA bootloader at restart
-	const int EEFC_FCMD_CGPB = 0x0C;
-	const int EEFC_KEY = 0x5A;
+	const int EEFC_FCMD_CGPB = 0x0C;  // Clear GPNVM bit
+	const int EEFC_KEY = 0x5A;		//  FKEY: Flash Writing Protection Key
+#if SAM4S_SERIES
+
 	while ((EFC0->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 	EFC0->EEFC_FCR =
 		EEFC_FCR_FCMD(EEFC_FCMD_CGPB) |
@@ -38,7 +49,24 @@ void banzai() {
 		EEFC_FCR_FKEY(EEFC_KEY);
 	while ((EFC0->EEFC_FSR & EEFC_FSR_FRDY) == 0);
 
+#elif SAM4E_SERIES
+	#warning SAM4E_SERIES Enabled 
+	while ((EFC->EEFC_FSR & EEFC_FSR_FRDY) == 0);
+	EFC->EEFC_FCR =
+		EEFC_FCR_FCMD(EEFC_FCMD_CGPB) |
+		EEFC_FCR_FARG(1) |
+		EEFC_FCR_FKEY(EEFC_KEY);
+	while ((EFC->EEFC_FSR & EEFC_FSR_FRDY) == 0);
+
+#endif
+
+
 	// From here flash memory is no more available.
+
+	// Memory swap needs some time to stabilize
+	for (uint32_t i=0; i<1000000; i++)
+		// force compiler to not optimize this
+		__asm__ __volatile__("");
 
 	// BANZAIIIIIII!!!
 	const int RSTC_KEY = 0xA5;
@@ -54,6 +82,7 @@ static int ticks = -1;
 
 void initiateReset(int _ticks) {
 	ticks = _ticks;
+	//banzai();
 }
 
 void cancelReset() {

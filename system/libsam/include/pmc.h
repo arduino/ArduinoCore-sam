@@ -60,8 +60,10 @@ extern "C" {
 /** Mask to access fast startup input */
 #define PMC_FAST_STARTUP_Msk    (0xFFFFu)
 
+
 /** PMC_WPMR Write Protect KEY, unlock it */
 #define PMC_WPMR_WPKEY_VALUE    PMC_WPMR_WPKEY((uint32_t) 0x504D43)
+//#define PMC_WPMR_WPKEY_VALUE    PMC_WPMR_WPKEY_PASSWD // PMC_WPMR_WPKEY was missing from atmel studio cmsis
 
 /** Using external oscillator */
 #define PMC_OSC_XTAL            0
@@ -72,6 +74,7 @@ extern "C" {
 #define PMC_PCK_0               0 /* PCK0 ID */
 #define PMC_PCK_1               1 /* PCK1 ID */
 #define PMC_PCK_2               2 /* PCK2 ID */
+
 
 /**
  * \name Master clock (MCK) Source and Prescaler configuration
@@ -86,7 +89,7 @@ void pmc_mck_set_source(uint32_t ul_source);
 uint32_t pmc_switch_mck_to_sclk(uint32_t ul_pres);
 uint32_t pmc_switch_mck_to_mainck(uint32_t ul_pres);
 uint32_t pmc_switch_mck_to_pllack(uint32_t ul_pres);
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 uint32_t pmc_switch_mck_to_pllbck(uint32_t ul_pres);
 #endif
 #if (SAM3XA_SERIES || SAM3U_SERIES)
@@ -172,7 +175,7 @@ void pmc_pck_set_source(uint32_t ul_id, uint32_t ul_source);
 uint32_t pmc_switch_pck_to_sclk(uint32_t ul_id, uint32_t ul_pres);
 uint32_t pmc_switch_pck_to_mainck(uint32_t ul_id, uint32_t ul_pres);
 uint32_t pmc_switch_pck_to_pllack(uint32_t ul_id, uint32_t ul_pres);
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 uint32_t pmc_switch_pck_to_pllbck(uint32_t ul_id, uint32_t ul_pres);
 #endif
 #if (SAM3XA_SERIES || SAM3U_SERIES)
@@ -192,16 +195,16 @@ uint32_t pmc_is_pck_enabled(uint32_t ul_id);
  */
 //@{
 
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_switch_udpck_to_pllack(uint32_t ul_usbdiv);
 #endif
-#if (SAM3S_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_switch_udpck_to_pllbck(uint32_t ul_usbdiv);
 #endif
 #if (SAM3XA_SERIES)
 void pmc_switch_udpck_to_upllck(uint32_t ul_usbdiv);
 #endif
-#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 void pmc_enable_udpck(void);
 void pmc_disable_udpck(void);
 #endif

@@ -1,0 +1,16 @@
+{
+  "name": "framework-arduino-sam",
+  "version": "0.0.0",
+  "description": "The official Arduino Wiring-based Framework for ATSAM3 microcontrollers",
+  "keywords": [
+    "framework",
+    "arduino",
+    "microchip",
+    "sam"
+  ],
+  "homepage": "https://www.arduino.cc/reference/en",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arduino/ArduinoCore-sam"
+  }
+}

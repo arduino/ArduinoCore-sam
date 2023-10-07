@@ -42,9 +42,9 @@
  * Peripherals
  */
 #include "include/adc.h"
-#if (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
-#include "include/dacc.h"
-#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
+//#if (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)|| (SAM4S_SERIES) && !(__SAM3S4A__)&& !(__SAM4S4A__)
+//#include "include/dacc.h"
+//#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
 
 #include "include/interrupt_sam_nvic.h"
 #include "include/efc.h"
@@ -56,15 +56,28 @@
 #include "include/rtc.h"
 #include "include/rtt.h"
 #include "include/spi.h"
+
+#if (SAM3_SERIES) || (SAM4S_SERIES)
 #include "include/ssc.h"
+#endif // (SAM3XA_SERIES) || (SAM3N_SERIES) || (SAM3S_SERIES)
+
 #include "include/tc.h"
 #include "include/twi.h"
 #include "include/usart.h"
 #include "include/wdt.h"
 
 #include "include/timetick.h"
+
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 #include "include/USB_device.h"
 #include "include/USB_host.h"
+// #warning USB_host and USB_device including
+#endif
+
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__)) 
+#include "include/udp_device.h"
+// #warning udp_device including
+#endif
 
 #if (SAM3XA_SERIES)
 #include "include/can.h"

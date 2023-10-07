@@ -18,7 +18,12 @@
 #define __USBDESC_H__
 
 #define CDC_ENABLED
-#define PLUGGABLE_USB_ENABLED
+
+#if (!defined(__SAM4S4A__)  && !defined(__SAM4E8E__))
+#define HID_ENABLED
+// #else 
+// #warning SAM4S4A / 4E8E not defined
+#endif
 
 #ifdef CDC_ENABLED
 #define CDC_INTERFACE_COUNT	2
@@ -28,12 +33,30 @@
 #define CDC_ENPOINT_COUNT	0
 #endif
 
+#ifdef HID_ENABLED
+#define HID_INTERFACE_COUNT	1
+#define HID_ENPOINT_COUNT	1
+#else
+#define HID_INTERFACE_COUNT	0
+#define HID_ENPOINT_COUNT	0
+#endif
+
 #define CDC_ACM_INTERFACE	0	// CDC ACM
 #define CDC_DATA_INTERFACE	1	// CDC Data
-#define CDC_FIRST_ENDPOINT	1
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
+ #define CDC_FIRST_ENDPOINT	3 
+#else
+ #define CDC_FIRST_ENDPOINT	1
+#endif
 #define CDC_ENDPOINT_ACM	(CDC_FIRST_ENDPOINT)						// CDC First
 #define CDC_ENDPOINT_OUT	(CDC_FIRST_ENDPOINT+1)
 #define CDC_ENDPOINT_IN		(CDC_FIRST_ENDPOINT+2)
+
+
+#define HID_INTERFACE		(CDC_ACM_INTERFACE + CDC_INTERFACE_COUNT)	// HID Interface
+#define HID_FIRST_ENDPOINT	(CDC_FIRST_ENDPOINT + CDC_ENPOINT_COUNT)
+#define HID_ENDPOINT_INT	(HID_FIRST_ENDPOINT)
+
 
 #define INTERFACE_COUNT		(MSC_INTERFACE + MSC_INTERFACE_COUNT)
 
@@ -42,7 +65,9 @@
 #define CDC_TX CDC_ENDPOINT_IN
 #endif
 
-#define ISERIAL_MAX_LEN	20
+#ifdef HID_ENABLED
+#define HID_TX HID_ENDPOINT_INT
+#endif
 
 #define IMANUFACTURER	1
 #define IPRODUCT		2

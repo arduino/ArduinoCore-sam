@@ -46,7 +46,7 @@ extern "C" {
  * @{
  */
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES
 /**
  * \brief Initialize the given ADC with the specified ADC clock and startup time.
  *
@@ -179,7 +179,7 @@ void adc_set_resolution(Adc *p_adc,const enum adc_resolution_t resolution)
 }
 
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Configure conversion trigger and free run mode.
  *
@@ -228,7 +228,7 @@ void adc_configure_trigger(Adc *p_adc, const enum adc_trigger_t trigger)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Configures ADC power saving mode.
  *
@@ -262,7 +262,7 @@ void adc_configure_power_save(Adc *p_adc, const uint8_t uc_sleep)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Configure conversion sequence.
  *
@@ -292,7 +292,7 @@ void adc_configure_sequence(Adc *p_adc, const enum adc_channel_num_t ch_list[],
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES ||  SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES ||  SAM3XA_SERIES
 /**
  * \brief Configure ADC timing.
  *
@@ -331,7 +331,7 @@ void adc_configure_timing(Adc *p_adc, const uint32_t ul_sh)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Enable analog change.
  *
@@ -345,7 +345,7 @@ void adc_enable_anch(Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Disable analog change.
  *
@@ -401,7 +401,7 @@ void adc_enable_channel(Adc *p_adc, const enum adc_channel_num_t adc_ch)
  */
 void adc_enable_all_channel(Adc *p_adc)
 {
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 	p_adc->ADC_CHER = 0xFFFF;
 #elif SAM3U_SERIES
 	p_adc->ADC_CHER = 0xFF;
@@ -426,7 +426,7 @@ void adc_disable_channel(Adc *p_adc, const enum adc_channel_num_t adc_ch)
  */
 void adc_disable_all_channel(Adc *p_adc)
 {
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 	p_adc->ADC_CHDR = 0xFFFF;
 #elif SAM3U_SERIES
 	p_adc->ADC_CHDR = 0xFF;
@@ -455,13 +455,18 @@ uint32_t adc_get_channel_status(const Adc *p_adc, const enum adc_channel_num_t a
  *
  * \return ADC value of the specified channel.
  */
+#warning adc_get_channel_value!!
 uint32_t adc_get_channel_value(const Adc *p_adc, const enum adc_channel_num_t adc_ch)
 {
 	uint32_t ul_data = 0;
 
-	if (15 >= adc_ch) {
-		ul_data = *(p_adc->ADC_CDR + adc_ch);
-	}
+	#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+		if (15 >= adc_ch) {
+			ul_data = *(p_adc->ADC_CDR + adc_ch);
+		}
+	#elif SAM4E_SERIES
+		ul_data = 0; // To be implemented... first Select channel AFEC_CSELR then read ADC_CDR
+	#endif	
 
 	return ul_data;
 }
@@ -478,7 +483,7 @@ uint32_t adc_get_latest_value(const Adc *p_adc)
 	return p_adc->ADC_LCDR;
 }
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Enable TAG option so that the number of the last converted channel
  * can be indicated.
@@ -491,7 +496,7 @@ void adc_enable_tag(Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Disable TAG option.
  *
@@ -503,7 +508,7 @@ void adc_disable_tag(Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Indicate the last converted channel.
  *
@@ -520,7 +525,7 @@ enum adc_channel_num_t adc_get_tag(const Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Enable conversion sequencer.
  *
@@ -532,7 +537,7 @@ void adc_start_sequencer(Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Disable conversion sequencer.
  *
@@ -544,7 +549,7 @@ void adc_stop_sequencer(Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Configure comparison mode.
  *
@@ -558,7 +563,7 @@ void adc_set_comparison_mode(Adc *p_adc, const uint8_t uc_mode)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Get comparison mode.
  *
@@ -572,7 +577,7 @@ uint32_t adc_get_comparison_mode(const Adc *p_adc)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Configure ADC compare window.
  *
@@ -588,7 +593,7 @@ void adc_set_comparison_window(Adc *p_adc, const uint16_t us_low_threshold,
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Configure comparison selected channel.
  *
@@ -607,7 +612,7 @@ void adc_set_comparison_channel(Adc *p_adc, const enum adc_channel_num_t channel
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Enable differential input for the specified channel.
  *
@@ -620,7 +625,7 @@ void adc_enable_channel_differential_input(Adc *p_adc, const enum adc_channel_nu
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Disable differential input for the specified channel.
  *
@@ -636,7 +641,7 @@ void adc_disable_channel_differential_input(Adc *p_adc, const enum adc_channel_n
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Enable analog signal offset for the specified channel.
  *
@@ -649,7 +654,7 @@ void adc_enable_channel_input_offset(Adc *p_adc, const enum adc_channel_num_t ch
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Disable analog signal offset for the specified channel.
  *
@@ -665,7 +670,7 @@ void adc_disable_channel_input_offset(Adc *p_adc, const enum adc_channel_num_t c
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Configure input gain for the specified channel.
  *
@@ -680,7 +685,7 @@ void adc_set_channel_input_gain(Adc *p_adc, const enum adc_channel_num_t channel
 }
 #endif
 
-#if SAM3SD8_SERIES || SAM4S_SERIES
+#if SAM3SD8_SERIES || SAM4S_SERIES || SAM4E_SERIES
 /**
  * \brief Set ADC auto calibration mode.
  *
@@ -733,7 +738,7 @@ void adc_disable_interrupt(Adc *p_adc, const uint32_t ul_source)
 	p_adc->ADC_IDR = ul_source;
 }
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Get ADC interrupt and overrun error status.
  *
@@ -783,7 +788,7 @@ uint32_t adc_get_interrupt_mask(const Adc *p_adc)
 	return p_adc->ADC_IMR;
 }
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3XA_SERIES
 /**
  * \brief Adapt performance versus power consumption.
  *
@@ -809,6 +814,13 @@ void adc_enable_ts(Adc *p_adc)
 {
 	p_adc->ADC_ACR |= ADC_ACR_TSON;
 }
+
+#elif SAM4E_SERIES
+#warning SAM4E_SERIES temp sensor not implemented
+void adc_enable_ts(Adc *p_adc)
+{
+	int i = 0; // To be implemented, The temperature sensor is connected to Channel 15 of the AFEC	
+}
 #endif
 
 #if SAM3S_SERIES || SAM4S_SERIES || SAM3XA_SERIES
@@ -821,9 +833,15 @@ void adc_disable_ts(Adc *p_adc)
 {
 	p_adc->ADC_ACR &= ~ADC_ACR_TSON;
 }
+#elif SAM4E_SERIES
+#warning SAM4E_SERIES
+// void adc_enable_ts(Adc *p_adc)
+// {
+// 	p_adc->ADC_ACR |= ADC_ACR_TSON;
+// }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Enable or disable write protection of ADC registers.
  *
@@ -836,7 +854,7 @@ void adc_set_writeprotect(Adc *p_adc, const uint32_t ul_enable)
 }
 #endif
 
-#if SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3XA_SERIES
+#if SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3XA_SERIES
 /**
  * \brief Indicate write protect status.
  *

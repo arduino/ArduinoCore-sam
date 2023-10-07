@@ -27,7 +27,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "sam4s.h"
+#include "sam4s/include/sam4s.h"
 
 /* Initialize segments */
 extern uint32_t _sfixed;

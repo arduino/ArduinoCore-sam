@@ -142,17 +142,30 @@
 /* Entire SAM3XA series */
 #define SAM3XA_SERIES ( SAM3X4 || SAM3X8 || SAM3A4 || SAM3A8)
 
+/* Entire SAM3 family */
+#define SAM3_SERIES (SAM3U_SERIES || SAM3XA_SERIES)
+
+// #ifdef SAM3XA_SERIES
+// #warning SAM3XA_SERIES  defined
+// #endif
+
+// #if SAM3XA_SERIES
+// #warning SAM3XA_SERIES is TRUE
+// #else
+// #warning SAM3XA_SERIES is FALSE
+// #endif
+
 /*
  * ----------------------------------------------------------------------------
  * SAM4 family
  * ----------------------------------------------------------------------------
  */
 
-
-/* Entire SAM3 Family */
-#define SAM3_SERIES ( SAM3N_SERIES || SAM3S_SERIES || SAM3SD8_SERIES || SAM3U_SERIES || SAM3XA_SERIES )
-
 /* SAM4S series */
+#define SAM4S4 ( \
+    part_is_defined( SAM4S4A ) || \
+    part_is_defined( SAM4S4B ) )
+	
 #define SAM4S8 ( \
     part_is_defined( SAM4S8B ) || \
     part_is_defined( SAM4S8C ) )
@@ -162,10 +175,49 @@
     part_is_defined( SAM4S16C ) )
 
 /* Entire SAM4S series */
-#define SAM4S_SERIES ( SAM4S8 || SAM4S16)
+#define SAM4S_SERIES ( SAM4S8 || SAM4S16 || SAM4S4)
+
+// #if  part_is_defined( SAM4S8B )
+// #warning part SAM4S8B  defined
+// #elif   part_is_defined( SAM4S8C )
+// #warning part SAM4S8C  defined
+// #endif
+
+// #ifdef SAM4S8
+// #warning SAM4S8  defined
+// #elif defined(SAM4S16)
+// #warning SAM4S16  defined
+// #elif defined(SAM4S4)
+// #warning SAM4S4  defined
+// #endif
+
+
+// #ifdef SAM4S_SERIES
+// #warning SAM4S is defined
+// #else
+// #warning SAM4S not defined
+// #endif
+
+/* SAM4E series */	
+#define SAM4E8 ( \
+    part_is_defined( SAM4E8C ) || \
+    part_is_defined( SAM4E8E ) )
+
+#define SAM4E16 ( \
+    part_is_defined( SAM4E16C ) || \
+    part_is_defined( SAM4E16E ) )
+
+/* Entire SAM4E series */
+#define SAM4E_SERIES ( SAM4E8 || SAM4E16 )
+
+// #ifdef SAM4E_SERIES
+// #warning SAM4E is defined
+// #else
+// #warning SAM4E not defined
+// #endif
 
 /* Entire SAM4 Family */
-#define SAM4_SERIES ( SAM4S_SERIES )
+#define SAM4_SERIES ( SAM4S_SERIES || SAM4E_SERIES)
 
 /*
  * ----------------------------------------------------------------------------

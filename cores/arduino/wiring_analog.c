@@ -59,6 +59,48 @@ uint32_t analogRead(uint32_t ulPin)
 
   ulChannel = g_APinDescription[ulPin].ulADCChannelNumber ;
 
+  #if defined __SAM4S4A__
+	static uint32_t latestSelectedChannel = -1;
+	switch ( g_APinDescription[ulPin].ulAnalogChannel )
+	{
+		// Handling ADC 12 bits channels
+		case ADC0 :
+		case ADC1 :
+		case ADC2 :
+		case ADC3 :
+		case ADC4 :
+		case ADC5 :
+		case ADC6 :
+		case ADC7 :
+
+			// Enable the corresponding channel
+			if (ulChannel != latestSelectedChannel) {
+				adc_enable_channel( ADC, ulChannel );
+				if ( latestSelectedChannel != (uint32_t)-1 )
+					adc_disable_channel( ADC, latestSelectedChannel );
+				latestSelectedChannel = ulChannel;
+			}
+
+			// Start the ADC
+			adc_start( ADC );
+
+			// Wait for end of conversion
+			while ((adc_get_status(ADC) & ADC_ISR_DRDY) != ADC_ISR_DRDY)
+				;
+
+			// Read the value
+			ulValue = adc_get_latest_value(ADC);
+			ulValue = mapResolution(ulValue, ADC_RESOLUTION, _readResolution);
+
+			break;
+
+		// Compiler could yell because we don't handle DAC pins
+		default :
+			ulValue=0;
+			break;
+	}
+#endif //SAM4S4A
+  
 #if defined __SAM3U4E__
 	switch ( g_APinDescription[ulPin].ulAnalogChannel )
 	{
@@ -148,12 +190,11 @@ uint32_t analogRead(uint32_t ulPin)
 		case ADC11 :
 
 			// Enable the corresponding channel
-			if (adc_get_channel_status(ADC, ulChannel) != 1) {
+			if (ulChannel != latestSelectedChannel) {
 				adc_enable_channel( ADC, ulChannel );
-				if ( latestSelectedChannel != (uint32_t)-1 && ulChannel != latestSelectedChannel)
+				if ( latestSelectedChannel != (uint32_t)-1 )
 					adc_disable_channel( ADC, latestSelectedChannel );
 				latestSelectedChannel = ulChannel;
-				g_pinStatus[ulPin] = (g_pinStatus[ulPin] & 0xF0) | PIN_STATUS_ANALOG;
 			}
 
 			// Start the ADC
@@ -190,15 +231,20 @@ static void TC_SetCMR_ChannelB(Tc *tc, uint32_t chan, uint32_t v)
 }
 
 static uint8_t PWMEnabled = 0;
+static uint8_t pinEnabled[PINS_COUNT];
 static uint8_t TCChanEnabled[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void analogOutputInit(void) {
+	uint8_t i;
+	for (i=0; i<PINS_COUNT; i++)
+		pinEnabled[i] = 0;
 }
 
 // Right now, PWM output only works on the pins with
 // hardware support.  These are defined in the appropriate
 // pins_*.c file.  For the rest of the pins, we default
 // to digital output.
+#if (!defined(__SAM4S4A__) && !defined(__SAM4E8E__))
 void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 	uint32_t attr = g_APinDescription[ulPin].ulPinAttribute;
 
@@ -260,7 +306,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 		}
 
 		uint32_t chan = g_APinDescription[ulPin].ulPWMChannel;
-		if ((g_pinStatus[ulPin] & 0xF) != PIN_STATUS_PWM) {
+		if (!pinEnabled[ulPin]) {
 			// Setup PWM for this pin
 			PIO_Configure(g_APinDescription[ulPin].pPort,
 					g_APinDescription[ulPin].ulPinType,
@@ -270,7 +316,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 			PWMC_SetPeriod(PWM_INTERFACE, chan, PWM_MAX_DUTY_CYCLE);
 			PWMC_SetDutyCycle(PWM_INTERFACE, chan, ulValue);
 			PWMC_EnableChannel(PWM_INTERFACE, chan);
-			g_pinStatus[ulPin] = (g_pinStatus[ulPin] & 0xF0) | PIN_STATUS_PWM;
+			pinEnabled[ulPin] = 1;
 		}
 
 		PWMC_SetDutyCycle(PWM_INTERFACE, chan, ulValue);
@@ -325,12 +371,12 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 				TC_SetCMR_ChannelB(chTC, chNo, TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_SET);
 			}
 		}
-		if ((g_pinStatus[ulPin] & 0xF) != PIN_STATUS_PWM) {
+		if (!pinEnabled[ulPin]) {
 			PIO_Configure(g_APinDescription[ulPin].pPort,
 					g_APinDescription[ulPin].ulPinType,
 					g_APinDescription[ulPin].ulPin,
 					g_APinDescription[ulPin].ulPinConfiguration);
-			g_pinStatus[ulPin] = (g_pinStatus[ulPin] & 0xF0) | PIN_STATUS_PWM;
+			pinEnabled[ulPin] = 1;
 		}
 		if (!TCChanEnabled[interfaceID]) {
 			TC_Start(chTC, chNo);
@@ -347,6 +393,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 	else
 		digitalWrite(ulPin, HIGH);
 }
+#endif //SAM3
 
 #ifdef __cplusplus
 }

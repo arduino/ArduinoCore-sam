@@ -1,31 +1,31 @@
-/* ----------------------------------------------------------------------------
- *         SAM Software Package License
- * ----------------------------------------------------------------------------
- * Copyright (c) 2012, Atmel Corporation
- *
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following condition is met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the disclaimer below.
- *
- * Atmel's name may not be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ----------------------------------------------------------------------------
- */
+/* ---------------------------------------------------------------------------- */
+/*                  Atmel Microcontroller Software Support                      */
+/*                       SAM Software Package License                           */
+/* ---------------------------------------------------------------------------- */
+/* Copyright (c) %copyright_year%, Atmel Corporation                                        */
+/*                                                                              */
+/* All rights reserved.                                                         */
+/*                                                                              */
+/* Redistribution and use in source and binary forms, with or without           */
+/* modification, are permitted provided that the following condition is met:    */
+/*                                                                              */
+/* - Redistributions of source code must retain the above copyright notice,     */
+/* this list of conditions and the disclaimer below.                            */
+/*                                                                              */
+/* Atmel's name may not be used to endorse or promote products derived from     */
+/* this software without specific prior written permission.                     */
+/*                                                                              */
+/* DISCLAIMER:  THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR   */
+/* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF */
+/* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE   */
+/* DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT, INDIRECT,      */
+/* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT */
+/* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,  */
+/* OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF    */
+/* LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING         */
+/* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, */
+/* EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                           */
+/* ---------------------------------------------------------------------------- */
 
 #include "sam4s.h"
 
@@ -37,46 +37,74 @@ extern "C" {
 /**INDENT-ON**/
 /* @endcond */
 
+/* External oscillator definition, to be overriden by application */
+
+#if (!defined CHIP_FREQ_XTAL_12M)
+#	define CHIP_FREQ_XTAL_12M (12000000UL)
+#endif
+
+
+#if (!defined CHIP_FREQ_XTAL)
+#  define CHIP_FREQ_XTAL CHIP_FREQ_XTAL_12M
+#endif
+
+
 /* Clock Settings (120MHz) */
 #define SYS_BOARD_OSCOUNT   (CKGR_MOR_MOSCXTST(0x8U))
+/*
 #define SYS_BOARD_PLLAR     (CKGR_PLLAR_ONE \
+							| CKGR_PLLAR_MULA(0x19U) \
+							| CKGR_PLLAR_PLLACOUNT(0x3fU) \
+							| CKGR_PLLAR_DIVA(0x2U))
+
+							// MOSC = fXtal * 20 /2
+#define SYS_BOARD_MCKR      (PMC_MCKR_PRES_CLK_1 | PMC_MCKR_CSS_PLLA_CLK)
+*/
+// used to be this : ( PLLA gives 240MHZ main clock, then main clock is set with a prescaler of 2, result in main clk at 120MHz )
+
+#define SYS_BOARD_PLLAR   (CKGR_PLLAR_ONE \
 							| CKGR_PLLAR_MULA(0x13U) \
 							| CKGR_PLLAR_PLLACOUNT(0x3fU) \
 							| CKGR_PLLAR_DIVA(0x1U))
+
 #define SYS_BOARD_MCKR      (PMC_MCKR_PRES_CLK_2 | PMC_MCKR_CSS_PLLA_CLK)
 
-#define SYS_CKGR_MOR_KEY_VALUE	CKGR_MOR_KEY(0x37) /* Key to unlock MOR register */
+#define SYS_CKGR_MOR_KEY_VALUE	CKGR_MOR_KEY(0x37u) /* Key to unlock MOR register */
 
-/* FIXME: should be generated by sock */
+
+/* Clock Settings (4MHz) using Internal Fast RC at boot*/
 uint32_t SystemCoreClock = CHIP_FREQ_MAINCK_RC_4MHZ;
 
 /**
  * \brief Setup the microcontroller system.
+ *
  * Initialize the System and update the SystemFrequency variable.
  */
-void SystemInit(void)
+void SystemInit( void )
 {
 	/* Set FWS according to SYS_BOARD_MCKR configuration */
-	EFC->EEFC_FMR = EEFC_FMR_FWS(4);
+	EFC0->EEFC_FMR = EEFC_FMR_FWS(6); // AS has this at 4 , Arduino like ist at 5 -6 ( no idea why )
 
 	/* Initialize main oscillator */
 	if (!(PMC->CKGR_MOR & CKGR_MOR_MOSCSEL)) {
 		PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT |
 			                     CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN;
 		while (!(PMC->PMC_SR & PMC_SR_MOSCXTS)) {
+			// while main occilator status is 0, wait for it to become ready
 		}
 	}
 
-	/* Switch to 3-20MHz Xtal oscillator */
+	/* Switch to 3-20MHz Xtal oscillator ( set CKGR_MOR_MOSCSEL )*/
 	PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT |
-	                           CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCSEL;
+	                           CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCSEL; 
 
-	while (!(PMC->PMC_SR & PMC_SR_MOSCSELS)) {
+	while (!(PMC->PMC_SR & PMC_SR_MOSCSELS)) { // check when MOSCSELS(tatus) is ready
 	}
 		PMC->PMC_MCKR = (PMC->PMC_MCKR & ~(uint32_t)PMC_MCKR_CSS_Msk) |
 			                    PMC_MCKR_CSS_MAIN_CLK;
 		while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {
 	}
+	// MOSCSELS == 1, so we can set the PLL
 
 	/* Initialize PLLA */
 	PMC->CKGR_PLLAR = SYS_BOARD_PLLAR;
@@ -94,12 +122,18 @@ void SystemInit(void)
 	}
 
 	SystemCoreClock = CHIP_FREQ_CPU_MAX;
+	//  SystemCoreClock should now be at 120 MHz, and PLLA as main clock source
+	
 }
 
-void SystemCoreClockUpdate(void)
+/**
+ * \brief Get Core Clock Frequency.
+ */
+void SystemCoreClockUpdate( void )
 {
 	/* Determine clock frequency according to clock register values */
-	switch (PMC->PMC_MCKR & (uint32_t) PMC_MCKR_CSS_Msk) {
+	
+switch (PMC->PMC_MCKR & (uint32_t) PMC_MCKR_CSS_Msk) {
 	case PMC_MCKR_CSS_SLOW_CLK:	/* Slow clock */
 		if (SUPC->SUPC_SR & SUPC_SR_OSCSEL) {
 			SystemCoreClock = CHIP_FREQ_XTAL_32K;
@@ -177,15 +211,15 @@ void system_init_flash(uint32_t dw_clk)
 {
 	/* Set FWS for embedded Flash access according to operating frequency */
 	if (dw_clk < CHIP_FREQ_FWS_0) {
-		EFC->EEFC_FMR = EEFC_FMR_FWS(0);
+		EFC0->EEFC_FMR = EEFC_FMR_FWS(0);
 	} else if (dw_clk < CHIP_FREQ_FWS_1) {
-		EFC->EEFC_FMR = EEFC_FMR_FWS(1);
+		EFC0->EEFC_FMR = EEFC_FMR_FWS(1);
 	} else if (dw_clk < CHIP_FREQ_FWS_2) {
-		EFC->EEFC_FMR = EEFC_FMR_FWS(2);
+		EFC0->EEFC_FMR = EEFC_FMR_FWS(2);
 	} else if (dw_clk < CHIP_FREQ_FWS_3) {
-		EFC->EEFC_FMR = EEFC_FMR_FWS(3);
+		EFC0->EEFC_FMR = EEFC_FMR_FWS(3);
 	} else {
-		EFC->EEFC_FMR = EEFC_FMR_FWS(4);
+		EFC0->EEFC_FMR = EEFC_FMR_FWS(4);
 	}
 }
 

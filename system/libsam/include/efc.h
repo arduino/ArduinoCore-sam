@@ -88,7 +88,7 @@ typedef enum efc_rc {
 #define EFC_FCMD_GGPB    0x0D	//!< Get GPNVM Bit
 #define EFC_FCMD_STUI    0x0E	//!< Start unique ID
 #define EFC_FCMD_SPUI    0x0F	//!< Stop unique ID
-#if (SAM3S_SERIES || SAM3N_SERIES || SAM3XA_SERIES || SAM4S_SERIES)
+#if (SAM3S_SERIES || SAM3N_SERIES || SAM3XA_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 #define EFC_FCMD_GCALB   0x10	//!< Get CALIB Bit
 #endif
 #if (SAM4S_SERIES)

@@ -65,7 +65,7 @@ extern "C" {
 #if (SAM3XA_SERIES || SAM3U_SERIES /*|| SAM4SD16 || SAM4SD32*/)
 # define READ_BUFF_ADDR0    IFLASH0_ADDR
 # define READ_BUFF_ADDR1    IFLASH1_ADDR
-#elif (SAM3S_SERIES || SAM3N_SERIES)
+#elif (SAM3S_SERIES || SAM3N_SERIES || SAM4E_SERIES)
 # define READ_BUFF_ADDR     IFLASH_ADDR
 #elif (SAM3U_SERIES || SAM4S_SERIES)
 # define READ_BUFF_ADDR     IFLASH0_ADDR
@@ -214,7 +214,7 @@ uint32_t efc_perform_command(Efc *p_efc, uint32_t ul_command,
 			EEFC_FCR_FKEY(FWP_KEY) | EEFC_FCR_FARG(ul_argument) |
 			EEFC_FCR_FCMD(ul_command));
 	return (p_efc->EEFC_FSR & EEFC_ERROR_FLAGS);
-#elif (SAM3N_SERIES || SAM3S_SERIES || SAM4S_SERIES || SAM3U_SERIES)
+#elif (SAM3N_SERIES || SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3U_SERIES)
 	// Use IAP function with 2 parameter in ROM.
 	static uint32_t(*iap_perform_command) (uint32_t, uint32_t);
 
@@ -295,7 +295,7 @@ uint32_t efc_perform_read_sequence(Efc *p_efc,
 	uint32_t *p_ul_data =
 			(uint32_t *) ((p_efc == EFC0) ?
 			READ_BUFF_ADDR0 : READ_BUFF_ADDR1);
-#elif (SAM3S_SERIES || SAM4S_SERIES || SAM3N_SERIES || SAM3U_SERIES)
+#elif (SAM3S_SERIES || SAM4S_SERIES || SAM4E_SERIES || SAM3N_SERIES || SAM3U_SERIES)
 	uint32_t *p_ul_data = (uint32_t *) READ_BUFF_ADDR;
 #else
 	return EFC_RC_NOT_SUPPORT;

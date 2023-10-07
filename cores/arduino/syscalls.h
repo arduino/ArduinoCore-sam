@@ -37,7 +37,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+//extern void _exit(int status);
+//
+//extern void _kill(int pid, int sig);
+//
+//extern int _getpid(void);
+//
 extern caddr_t _sbrk( int incr ) ;
 
 extern int link( char *cOld, char *cNew ) ;

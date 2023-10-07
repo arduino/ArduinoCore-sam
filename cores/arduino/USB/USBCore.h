@@ -46,19 +46,24 @@
 #define REQUEST_OTHER				0x03
 #define REQUEST_RECIPIENT			0x1F
 
-#define REQUEST_DEVICETOHOST_CLASS_INTERFACE    (REQUEST_DEVICETOHOST | REQUEST_CLASS | REQUEST_INTERFACE)
-#define REQUEST_HOSTTODEVICE_CLASS_INTERFACE    (REQUEST_HOSTTODEVICE | REQUEST_CLASS | REQUEST_INTERFACE)
-#define REQUEST_DEVICETOHOST_STANDARD_INTERFACE (REQUEST_DEVICETOHOST | REQUEST_STANDARD | REQUEST_INTERFACE)
+#define REQUEST_DEVICETOHOST_CLASS_INTERFACE  (REQUEST_DEVICETOHOST + REQUEST_CLASS + REQUEST_INTERFACE)
+#define REQUEST_HOSTTODEVICE_CLASS_INTERFACE  (REQUEST_HOSTTODEVICE + REQUEST_CLASS + REQUEST_INTERFACE)
 
 //	Class requests
 
 #define CDC_SET_LINE_CODING			0x20
 #define CDC_GET_LINE_CODING			0x21
 #define CDC_SET_CONTROL_LINE_STATE	0x22
-#define CDC_SEND_BREAK				0x23
 
 #define MSC_RESET					0xFF
 #define MSC_GET_MAX_LUN				0xFE
+
+#define HID_GET_REPORT				0x01
+#define HID_GET_IDLE				0x02
+#define HID_GET_PROTOCOL			0x03
+#define HID_SET_REPORT				0x09
+#define HID_SET_IDLE				0x0A
+#define HID_SET_PROTOCOL			0x0B
 
 //	Descriptors
 
@@ -93,8 +98,6 @@
 #define USB_ENDPOINT_OUT(addr)                 ((addr) | 0x00)
 #define USB_ENDPOINT_IN(addr)                  ((addr) | 0x80)
 
-#define USB_ENDPOINTS 							7
-
 #define USB_ENDPOINT_TYPE_MASK                 0x03
 #define USB_ENDPOINT_TYPE_CONTROL              0x00
 #define USB_ENDPOINT_TYPE_ISOCHRONOUS          0x01
@@ -105,6 +108,7 @@
 
 #define CDC_V1_10                               0x0110
 #define CDC_COMMUNICATION_INTERFACE_CLASS       0x02
+
 
 #define CDC_CALL_MANAGEMENT                     0x01
 #define CDC_ABSTRACT_CONTROL_MODEL              0x02
@@ -117,6 +121,10 @@
 
 #define MSC_SUBCLASS_SCSI						0x06
 #define MSC_PROTOCOL_BULK_ONLY					0x50
+
+#define HID_HID_DESCRIPTOR_TYPE					0x21
+#define HID_REPORT_DESCRIPTOR_TYPE				0x22
+#define HID_PHYSICAL_DESCRIPTOR_TYPE			0x23
 
 _Pragma("pack(1)")
 
@@ -138,6 +146,8 @@ typedef struct {
 	uint8_t	bNumConfigurations;
 } DeviceDescriptor;
 
+// #warning USBCore.h included 
+
 //	Config
 typedef struct {
 	uint8_t	len;			// 9
@@ -149,18 +159,6 @@ typedef struct {
 	uint8_t	attributes;
 	uint8_t	maxPower;
 } ConfigDescriptor;
-
-//	Device Qualifier (only needed for USB2.0 devices)
-typedef struct {
-	uint8_t	bLength;
-	uint8_t	dtype;
-	uint16_t bDescriptorType;
-	uint8_t	bDeviceClass;
-	uint8_t	bDeviceSubClass;
-	uint8_t	bDeviceProtocol;
-	uint8_t	bMaxPacketSize0;
-	uint8_t	bNumConfigurations;
-} QualifierDescriptor;
 
 //	String
 
@@ -264,22 +262,42 @@ typedef struct
 	EndpointDescriptor			out;
 } MSCDescriptor;
 
+typedef struct
+{
+	uint8_t len;			// 9
+	uint8_t dtype;			// 0x21
+	uint8_t addr;
+	uint8_t	versionL;		// 0x101
+	uint8_t	versionH;		// 0x101
+	uint8_t	country;
+	uint8_t	desctype;		// 0x22 report
+	uint8_t	descLenL;
+	uint8_t	descLenH;
+} HIDDescDescriptor;
+
+typedef struct
+{
+	InterfaceDescriptor		hid;
+	HIDDescDescriptor		desc;
+	EndpointDescriptor		in;
+} HIDDescriptor;
+
 _Pragma("pack()")
 
 #define D_DEVICE(_class,_subClass,_proto,_packetSize0,_vid,_pid,_version,_im,_ip,_is,_configs) \
 	{ 18, 1, 0x200, _class,_subClass,_proto,_packetSize0,_vid,_pid,_version,_im,_ip,_is,_configs }
 
 #define D_CONFIG(_totalLength,_interfaces) \
-	{ 9, 2, (uint16_t)(_totalLength),_interfaces, 1, 0, USB_CONFIG_SELF_POWERED, USB_CONFIG_POWER_MA(500) }
+	{ 9, 2, _totalLength,_interfaces, 1, 0, USB_CONFIG_SELF_POWERED, USB_CONFIG_POWER_MA(500) }
 
 #define D_OTHERCONFIG(_totalLength,_interfaces) \
-	{ 9, 7, (uint16_t)(_totalLength),_interfaces, 1, 0, USB_CONFIG_SELF_POWERED, USB_CONFIG_POWER_MA(500) }
+	{ 9, 7, _totalLength,_interfaces, 1, 0, USB_CONFIG_SELF_POWERED, USB_CONFIG_POWER_MA(500) }
 
 #define D_INTERFACE(_n,_numEndpoints,_class,_subClass,_protocol) \
 	{ 9, 4, _n, 0, _numEndpoints, _class,_subClass, _protocol, 0 }
 
 #define D_ENDPOINT(_addr,_attr,_packetSize, _interval) \
-	{ 7, 5, (uint8_t)(_addr),_attr,_packetSize, _interval }
+	{ 7, 5, _addr,_attr,_packetSize, _interval }
 
 #define D_QUALIFIER(_class,_subClass,_proto,_packetSize0,_configs) \
 	{ 10, 6, 0x200, _class,_subClass,_proto,_packetSize0,_configs }
@@ -287,7 +305,61 @@ _Pragma("pack()")
 #define D_IAD(_firstInterface, _count, _class, _subClass, _protocol) \
 	{ 8, 11, _firstInterface, _count, _class, _subClass, _protocol, 0 }
 
+#define D_HIDREPORT(_descriptorLength) \
+	{ 9, 0x21, 0x1, 0x1, 0, 1, 0x22, _descriptorLength, 0 }
+
 #define D_CDCCS(_subtype,_d0,_d1)	{ 5, 0x24, _subtype, _d0, _d1 }
 #define D_CDCCS4(_subtype,_d0)		{ 4, 0x24, _subtype, _d0 }
 
 #endif
+
+#if (defined(__SAM4S4A__) || defined(__SAM4E8E__))
+/** Atmel helper functions from compiler.h used in udp_device.h*/
+typedef uint32_t                U32;  //!< 32-bit unsigned integer.
+#if (defined __GNUC__) || (defined __CC_ARM)
+#   define ctz(u)              __builtin_ctz(u)
+#else
+#   define ctz(u)              ((u) & (1ul <<  0) ?  0 : \
+                                (u) & (1ul <<  1) ?  1 : \
+                                (u) & (1ul <<  2) ?  2 : \
+                                (u) & (1ul <<  3) ?  3 : \
+                                (u) & (1ul <<  4) ?  4 : \
+                                (u) & (1ul <<  5) ?  5 : \
+                                (u) & (1ul <<  6) ?  6 : \
+                                (u) & (1ul <<  7) ?  7 : \
+                                (u) & (1ul <<  8) ?  8 : \
+                                (u) & (1ul <<  9) ?  9 : \
+                                (u) & (1ul << 10) ? 10 : \
+                                (u) & (1ul << 11) ? 11 : \
+                                (u) & (1ul << 12) ? 12 : \
+                                (u) & (1ul << 13) ? 13 : \
+                                (u) & (1ul << 14) ? 14 : \
+                                (u) & (1ul << 15) ? 15 : \
+                                (u) & (1ul << 16) ? 16 : \
+                                (u) & (1ul << 17) ? 17 : \
+                                (u) & (1ul << 18) ? 18 : \
+                                (u) & (1ul << 19) ? 19 : \
+                                (u) & (1ul << 20) ? 20 : \
+                                (u) & (1ul << 21) ? 21 : \
+                                (u) & (1ul << 22) ? 22 : \
+                                (u) & (1ul << 23) ? 23 : \
+                                (u) & (1ul << 24) ? 24 : \
+                                (u) & (1ul << 25) ? 25 : \
+                                (u) & (1ul << 26) ? 26 : \
+                                (u) & (1ul << 27) ? 27 : \
+                                (u) & (1ul << 28) ? 28 : \
+                                (u) & (1ul << 29) ? 29 : \
+                                (u) & (1ul << 30) ? 30 : \
+                                (u) & (1ul << 31) ? 31 : \
+                                32)
+#endif
+#define Rd_bits( value, mask)        ((value) & (mask))
+#define Rd_bitfield( value, mask)           (Rd_bits( value, mask) >> ctz(mask))
+#define Tst_bits( value, mask)  (Rd_bits(value, mask) != 0)
+#define Wr_bitfield(lvalue, mask, bitfield) (Wr_bits(lvalue, mask, (U32)(bitfield) << ctz(mask)))
+#define Wr_bits(lvalue, mask, bits)  ((lvalue) = ((lvalue) & ~(mask)) |\
+                                                 ((bits  ) &  (mask)))
+#define Set_bits(lvalue, mask)  ((lvalue) |=  (mask))
+#define Clr_bits(lvalue, mask)  ((lvalue) &= ~(mask))
+#endif //SAM4S4A
+

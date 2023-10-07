@@ -535,7 +535,11 @@ void PWMC_FaultClear( Pwm* pPwm, uint32_t fault)
  */
 void PWMC_SetFaultProtectionValue( Pwm* pPwm, uint32_t value)
 {
+#if (SAM4E_SERIES)    
+    pPwm->PWM_FPV1 = value;
+#else
     pPwm->PWM_FPV = value;
+#endif    
 }
 
 /**
@@ -568,7 +572,7 @@ void PWMC_EnableFaultProtection( Pwm* pPwm, uint32_t ul_channel, uint32_t ul_val
 	}
 #endif
 
-#if (SAM3U_SERIES || SAM3S_SERIES || SAM3SD8_SERIES || SAM4S_SERIES)
+#if (SAM3U_SERIES || SAM3S_SERIES || SAM3SD8_SERIES || SAM4S_SERIES || SAM4E_SERIES)
 	ul_channel *= 8;
 	ul_fault_enable_reg = pPwm->PWM_FPE;
 	ul_fault_enable_reg &= ~(0xFF << ul_channel);
