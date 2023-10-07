@@ -21,15 +21,15 @@ board = due
     
 ```
 
-Development SAM4 Version
+Development SAM4E Version
 
 ```
-[env:sam4s4a_SAM4]
+[env:SAM4]
 platform = atmelsam
 framework = arduino
-board = motionbow
+board = sam4e8e
 platform_packages =
-    framework-arduino-sam@https://github.com/chepo92/ArduinoCore-sam.git#dev-SAM4SCore
+    framework-arduino-sam@https://github.com/chepo92/ArduinoCore-sam.git#dev-SAM4E
     toolchain-gccarmnoneeabi @ 1.40804.0
 
 ```
