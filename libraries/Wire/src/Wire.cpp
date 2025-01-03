@@ -26,6 +26,7 @@ extern "C" {
 #include <string.h>
 }
 
+#include "WireBuffer.h"
 #include "Wire.h"
 
 static inline bool TWI_FailedAcknowledge(Twi *pTwi) {
@@ -96,11 +97,24 @@ static inline bool TWI_STATUS_NACK(uint32_t status) {
 	return (status & TWI_SR_NACK) == TWI_SR_NACK;
 }
 
-TwoWire::TwoWire(Twi *_twi, void(*_beginCb)(void), void(*_endCb)(void)) :
+uint8_t* TwoWire:: srvBuffer()const {
+  return buffers.srvBuffer;
+}
+
+uint8_t* TwoWire:: rxBuffer()const {
+  return buffers.rxBuffer;
+}
+
+uint8_t* TwoWire:: txBuffer()const {
+  return buffers.txBuffer;
+}
+
+TwoWire::TwoWire(const TwoWireBuffer::Buffers& _buffers,
+    Twi *_twi, void(*_beginCb)(void), void(*_endCb)(void)) : buffers(_buffers),
 	twi(_twi), rxBufferIndex(0), rxBufferLength(0), txAddress(0),
-			txBufferLength(0), srvBufferIndex(0), srvBufferLength(0), status(
-					UNINITIALIZED), onBeginCallback(_beginCb), 
-						onEndCallback(_endCb), twiClock(TWI_CLOCK) {
+	txBufferLength(0), srvBufferIndex(0), srvBufferLength(0), status(UNINITIALIZED),
+	onBeginCallback(_beginCb), onEndCallback(_endCb), twiClock(TWI_CLOCK),
+	onReceiveCallback(nullptr), onRequestCallback(nullptr) {
 }
 
 void TwoWire::begin(void) {
@@ -128,7 +142,7 @@ void TwoWire::begin(uint8_t address) {
 }
 
 void TwoWire::begin(int address) {
-	begin((uint8_t) address);
+	begin(static_cast<uint8_t>(address));
 }
 
 void TwoWire::end(void) {
@@ -147,8 +161,8 @@ void TwoWire::setClock(uint32_t frequency) {
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop) {
-	if (quantity > BUFFER_LENGTH)
-		quantity = BUFFER_LENGTH;
+	if (quantity > buffers.RX_BUFFER_SIZE)
+		quantity = buffers.RX_BUFFER_SIZE;
 
 	// perform blocking read into buffer
 	int readed = 0;
@@ -159,7 +173,7 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddres
 			TWI_SendSTOPCondition( twi);
 
 		if (TWI_WaitByteReceived(twi, RECV_TIMEOUT))
-			rxBuffer[readed++] = TWI_ReadByte(twi);
+			rxBuffer()[readed++] = TWI_ReadByte(twi);
 		else
 			break;
 	} while (readed < quantity);
@@ -172,32 +186,12 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddres
 	return readed;
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop) {
-	return requestFrom((uint8_t) address, (uint8_t) quantity, (uint32_t) 0, (uint8_t) 0, (uint8_t) sendStop);
-}
-
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity) {
-	return requestFrom((uint8_t) address, (uint8_t) quantity, (uint8_t) true);
-}
-
-uint8_t TwoWire::requestFrom(int address, int quantity) {
-	return requestFrom((uint8_t) address, (uint8_t) quantity, (uint8_t) true);
-}
-
-uint8_t TwoWire::requestFrom(int address, int quantity, int sendStop) {
-	return requestFrom((uint8_t) address, (uint8_t) quantity, (uint8_t) sendStop);
-}
-
 void TwoWire::beginTransmission(uint8_t address) {
 	status = MASTER_SEND;
 
 	// save address of target and empty buffer
 	txAddress = address;
 	txBufferLength = 0;
-}
-
-void TwoWire::beginTransmission(int address) {
-	beginTransmission((uint8_t) address);
 }
 
 //
@@ -216,14 +210,14 @@ void TwoWire::beginTransmission(int address) {
 uint8_t TwoWire::endTransmission(uint8_t sendStop) {
 	uint8_t error = 0;
 	// transmit buffer (blocking)
-	TWI_StartWrite(twi, txAddress, 0, 0, txBuffer[0]);
+	TWI_StartWrite(twi, txAddress, 0, 0, txBuffer()[0]);
 	if (!TWI_WaitByteSent(twi, XMIT_TIMEOUT))
 		error = 2;	// error, got NACK on address transmit
 	
 	if (error == 0) {
 		uint16_t sent = 1;
 		while (sent < txBufferLength) {
-			TWI_WriteByte(twi, txBuffer[sent++]);
+			TWI_WriteByte(twi, txBuffer()[sent++]);
 			if (!TWI_WaitByteSent(twi, XMIT_TIMEOUT))
 				error = 3;	// error, got NACK during data transmmit
 		}
@@ -250,14 +244,14 @@ uint8_t TwoWire::endTransmission(void)
 
 size_t TwoWire::write(uint8_t data) {
 	if (status == MASTER_SEND) {
-		if (txBufferLength >= BUFFER_LENGTH)
+		if (txBufferLength >= buffers.TX_BUFFER_SIZE)
 			return 0;
-		txBuffer[txBufferLength++] = data;
+		txBuffer()[txBufferLength++] = data;
 		return 1;
 	} else {
-		if (srvBufferLength >= BUFFER_LENGTH)
+		if (srvBufferLength >= buffers.SRV_BUFFER_SIZE)
 			return 0;
-		srvBuffer[srvBufferLength++] = data;
+		srvBuffer()[srvBufferLength++] = data;
 		return 1;
 	}
 }
@@ -265,15 +259,15 @@ size_t TwoWire::write(uint8_t data) {
 size_t TwoWire::write(const uint8_t *data, size_t quantity) {
 	if (status == MASTER_SEND) {
 		for (size_t i = 0; i < quantity; ++i) {
-			if (txBufferLength >= BUFFER_LENGTH)
+			if (txBufferLength >= buffers.TX_BUFFER_SIZE)
 				return i;
-			txBuffer[txBufferLength++] = data[i];
+			txBuffer()[txBufferLength++] = data[i];
 		}
 	} else {
 		for (size_t i = 0; i < quantity; ++i) {
-			if (srvBufferLength >= BUFFER_LENGTH)
+			if (srvBufferLength >= buffers.SRV_BUFFER_SIZE)
 				return i;
-			srvBuffer[srvBufferLength++] = data[i];
+			srvBuffer()[srvBufferLength++] = data[i];
 		}
 	}
 	return quantity;
@@ -285,13 +279,13 @@ int TwoWire::available(void) {
 
 int TwoWire::read(void) {
 	if (rxBufferIndex < rxBufferLength)
-		return rxBuffer[rxBufferIndex++];
+		return rxBuffer()[rxBufferIndex++];
 	return -1;
 }
 
 int TwoWire::peek(void) {
 	if (rxBufferIndex < rxBufferLength)
-		return rxBuffer[rxBufferIndex];
+		return rxBuffer()[rxBufferIndex];
 	return -1;
 }
 
@@ -332,7 +326,7 @@ void TwoWire::onService(void) {
 				onRequestCallback();
 			else
 				// create a default 1-byte response
-				write((uint8_t) 0);
+				write(static_cast<uint8_t>(0));
 		}
 	}
 
@@ -341,8 +335,8 @@ void TwoWire::onService(void) {
 			// Copy data into rxBuffer
 			// (allows to receive another packet while the
 			// user program reads actual data)
-			for (uint8_t i = 0; i < srvBufferLength; ++i)
-				rxBuffer[i] = srvBuffer[i];
+			for (size_t i = 0; i < srvBufferLength; ++i)
+				rxBuffer()[i] = srvBuffer()[i];
 			rxBufferIndex = 0;
 			rxBufferLength = srvBufferLength;
 
@@ -359,8 +353,8 @@ void TwoWire::onService(void) {
 
 	if (status == SLAVE_RECV) {
 		if (TWI_STATUS_RXRDY(sr)) {
-			if (srvBufferLength < BUFFER_LENGTH)
-				srvBuffer[srvBufferLength++] = TWI_ReadByte(twi);
+			if (srvBufferLength < buffers.SRV_BUFFER_SIZE)
+				srvBuffer()[srvBufferLength++] = TWI_ReadByte(twi);
 		}
 	}
 
@@ -368,7 +362,7 @@ void TwoWire::onService(void) {
 		if (TWI_STATUS_TXRDY(sr) && !TWI_STATUS_NACK(sr)) {
 			uint8_t c = 'x';
 			if (srvBufferIndex < srvBufferLength)
-				c = srvBuffer[srvBufferIndex++];
+				c = srvBuffer()[srvBufferIndex++];
 			TWI_WriteByte(twi, c);
 		}
 	}
@@ -405,7 +399,7 @@ static void Wire_Deinit(void) {
 	// and pullups were not enabled
 }
 
-TwoWire Wire = TwoWire(WIRE_INTERFACE, Wire_Init, Wire_Deinit);
+TwoWire Wire = TwoWire(WireBuffer::buffers, WIRE_INTERFACE, Wire_Init, Wire_Deinit);
 
 void WIRE_ISR_HANDLER(void) {
 	Wire.onService();
@@ -443,7 +437,7 @@ static void Wire1_Deinit(void) {
 	// and pullups were not enabled
 }
 
-TwoWire Wire1 = TwoWire(WIRE1_INTERFACE, Wire1_Init, Wire1_Deinit);
+TwoWire Wire1 = TwoWire(Wire1Buffer::buffers, WIRE1_INTERFACE, Wire1_Init, Wire1_Deinit);
 
 void WIRE1_ISR_HANDLER(void) {
 	Wire1.onService();

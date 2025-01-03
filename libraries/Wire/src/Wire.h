@@ -23,62 +23,83 @@
 
 // Include Atmel CMSIS driver
 #include <include/twi.h>
-
 #include "Stream.h"
 #include "variant.h"
 
-#define BUFFER_LENGTH 32
+// Forward declaration of TwoWireBuffer::Buffers
+namespace TwoWireBuffer {
+  struct Buffers;
+}
 
  // WIRE_HAS_END means Wire has end()
 #define WIRE_HAS_END 1
 
 class TwoWire : public Stream {
 public:
-	TwoWire(Twi *twi, void(*begin_cb)(void), void(*end_cb)(void));
+	TwoWire(const TwoWireBuffer::Buffers& _buffers,
+	    Twi *twi, void(*begin_cb)(void), void(*end_cb)(void));
 	void begin();
 	void begin(uint8_t);
 	void begin(int);
 	void end();
 	void setClock(uint32_t);
 	void beginTransmission(uint8_t);
-	void beginTransmission(int);
+  inline void beginTransmission(int address) {
+    beginTransmission(static_cast<uint8_t>(address));
+  }
 	uint8_t endTransmission(void);
-    uint8_t endTransmission(uint8_t);
-	uint8_t requestFrom(uint8_t, uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t, uint8_t);
+  uint8_t endTransmission(uint8_t);
 	uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t);
-	uint8_t requestFrom(int, int);
-    uint8_t requestFrom(int, int, int);
-	virtual size_t write(uint8_t);
-	virtual size_t write(const uint8_t *, size_t);
-	virtual int available(void);
-	virtual int read(void);
-	virtual int peek(void);
-	virtual void flush(void);
+  inline uint8_t requestFrom(uint8_t address, uint8_t quantity) {
+    return requestFrom(static_cast<uint8_t>(address),
+        static_cast<uint8_t>(quantity), static_cast<uint8_t>(true));
+  }
+  inline uint8_t requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop) {
+    return requestFrom(static_cast<uint8_t>(address),
+        static_cast<uint8_t>(quantity), static_cast<uint32_t>(0),
+        static_cast<uint8_t>(0), static_cast<uint8_t>(sendStop));
+  }
+  inline uint8_t requestFrom(int address, int quantity) {
+    return requestFrom(static_cast<uint8_t>(address),
+        static_cast<uint8_t>(quantity), static_cast<uint8_t>(true));
+  }
+  inline uint8_t requestFrom(int address, int quantity, int sendStop) {
+    return requestFrom(static_cast<uint8_t>(address),
+        static_cast<uint8_t>(quantity), static_cast<uint8_t>(sendStop));
+  }
+	size_t write(uint8_t) override;
+	size_t write(const uint8_t *, size_t) override;
+	int available(void) override;
+	int read(void) override;
+	int peek(void) override;
+	void flush(void) override;
 	void onReceive(void(*)(int));
 	void onRequest(void(*)(void));
 
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
-    using Print::write;
+  inline size_t write(unsigned long n) { return write(static_cast<uint8_t>(n)); }
+  inline size_t write(long n) { return write(static_cast<uint8_t>(n)); }
+  inline size_t write(unsigned int n) { return write(static_cast<uint8_t>(n)); }
+  inline size_t write(int n) { return write(static_cast<uint8_t>(n)); }
+  using Print::write;
 
 	void onService(void);
 
 private:
+	// Container of rxBuffer, txBuffer and srvBuffer
+	const TwoWireBuffer::Buffers& buffers;
+
 	// RX Buffer
-	uint8_t rxBuffer[BUFFER_LENGTH];
+  inline uint8_t* rxBuffer() const;
 	uint8_t rxBufferIndex;
 	uint8_t rxBufferLength;
 
 	// TX Buffer
+  inline uint8_t* txBuffer() const;
 	uint8_t txAddress;
-	uint8_t txBuffer[BUFFER_LENGTH];
 	uint8_t txBufferLength;
 
 	// Service buffer
-	uint8_t srvBuffer[BUFFER_LENGTH];
+	inline uint8_t* srvBuffer() const;
 	uint8_t srvBufferIndex;
 	uint8_t srvBufferLength;
 
@@ -87,13 +108,13 @@ private:
 	void (*onReceiveCallback)(int);
 
 	// Called before initialization
-	void (*onBeginCallback)(void);
+	void (*const onBeginCallback)(void);
 
 	// Called after deinitialization
-	void (*onEndCallback)(void);
+	void (*const onEndCallback)(void);
 
 	// TWI instance
-	Twi *twi;
+	Twi * const twi;
 
 	// TWI state
 	enum TwoWireStatus {
@@ -108,12 +129,12 @@ private:
 	TwoWireStatus status;
 
 	// TWI clock frequency
-	static const uint32_t TWI_CLOCK = 100000;
+	static constexpr uint32_t TWI_CLOCK = 100000;
 	uint32_t twiClock;
 
 	// Timeouts (
-	static const uint32_t RECV_TIMEOUT = 100000;
-	static const uint32_t XMIT_TIMEOUT = 100000;
+	static constexpr uint32_t RECV_TIMEOUT = 100000;
+	static constexpr uint32_t XMIT_TIMEOUT = 100000;
 };
 
 #if WIRE_INTERFACES_COUNT > 0
